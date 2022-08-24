@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -17,22 +16,19 @@ public class SettingInvListener implements Listener {
         Player player = (Player) e.getWhoClicked();
 
         if (Main.getSettingsInv(player.getUniqueId()).getInventory().equals(e.getInventory())){
-            System.out.println("Check");
-        }
-    }
-
-    @EventHandler
-    public void onInvDrag(InventoryDragEvent e){
-        Player player = (Player) e.getWhoClicked();
-        if (Main.getSettingsInv(player.getUniqueId()).equals(e.getInventory())){
+            System.out.println("check");
+            Main.getSettingsInv(player.getUniqueId()).onClick(e.getRawSlot(), player);
             e.setCancelled(true);
         }
     }
 
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
-        Main.getSettingInvs().put(player.getUniqueId(), new SettingsInv());
+        if (!Main.getSettingInvs().containsKey(player.getUniqueId())){
+            Main.getSettingInvs().put(player.getUniqueId(), new SettingsInv());
+        }
     }
 
     @EventHandler

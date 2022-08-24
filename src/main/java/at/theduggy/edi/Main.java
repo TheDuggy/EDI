@@ -5,6 +5,7 @@ import at.theduggy.edi.settings.SettingsCommand;
 import at.theduggy.edi.settings.SettingsInv;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -18,6 +19,9 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        for (Player player:Bukkit.getOnlinePlayers()){
+            settingInvs.put(player.getUniqueId(), new SettingsInv());
+        }
         Bukkit.getPluginManager().registerEvents(new SettingInvListener(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
     }
