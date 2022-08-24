@@ -1,6 +1,7 @@
 package at.theduggy.edi.settings;
 
 import at.theduggy.edi.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,8 +9,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class SettingInvListener implements Listener {
+
+public class GlobalOptionController implements Listener {
+
+
 
     @EventHandler
     public void onClick(InventoryClickEvent e){
@@ -35,6 +42,41 @@ public class SettingInvListener implements Listener {
     public void onQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();
         Main.getSettingInvs().remove(player.getUniqueId());
+    }
+
+
+    public enum Options {
+        TOGGLE_EDI(4),
+        COORDINATES(10);
+
+        private final int slot;
+        Options(int slot) {
+            this.slot = slot;
+        }
+
+        public int getMainSlot(){
+            return slot;
+        }
+
+        public int getEnableButtonSlot(){
+            return slot+1;
+        }
+        public int getDisableButtonSlot(){
+            return slot+2;
+        }
+
+        public static List<Integer> getEnableButtonSlots(){
+            List<Integer> enableButtonSlots = new ArrayList<>();
+            Arrays.stream(values()).forEach(option -> enableButtonSlots.add(option.getEnableButtonSlot()));
+            return enableButtonSlots;
+        }
+
+        public static List<Integer> getDisableButtonSlots(){
+            List<Integer> disableButtonSlots = new ArrayList<>();
+            Arrays.stream(values()).forEach(option -> disableButtonSlots.add(option.getDisableButtonSlot()));
+            return disableButtonSlots;
+        }
+
     }
 
 }

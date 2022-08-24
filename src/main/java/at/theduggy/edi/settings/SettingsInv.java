@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -15,8 +16,8 @@ public class SettingsInv {
 
     private boolean show;
     private boolean showCords;
-
     private final Inventory inventory;
+
 
     public SettingsInv(){
         this.inventory = Bukkit.createInventory(null, 54,"EDI Settings");
@@ -45,12 +46,12 @@ public class SettingsInv {
         optionInfoMeta.setLore(new ArrayList<>(Arrays.asList(info)));
         optionInfo.setItemMeta(optionInfoMeta);
         if (enabled){
-            yes.addUnsafeEnchantment(Enchantment.KNOCKBACK,1);
-            //yesMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            yesMeta.addEnchant(Enchantment.KNOCKBACK,1, true);
+            yesMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             System.out.println(yesMeta.getEnchants());
         }else {
-            no.addUnsafeEnchantment(Enchantment.KNOCKBACK,1);
-            //noMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            noMeta.addEnchant(Enchantment.KNOCKBACK,1, true);
+            noMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             System.out.println(noMeta.getEnchants());
         }
 
@@ -90,6 +91,5 @@ public class SettingsInv {
                 break;
         }
     }
-
 
 }

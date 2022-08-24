@@ -1,6 +1,6 @@
 package at.theduggy.edi;
 
-import at.theduggy.edi.settings.SettingInvListener;
+import at.theduggy.edi.settings.GlobalOptionController;
 import at.theduggy.edi.settings.SettingsCommand;
 import at.theduggy.edi.settings.SettingsInv;
 import org.bukkit.Bukkit;
@@ -13,7 +13,6 @@ import java.util.UUID;
 
 public class Main extends JavaPlugin {
 
-
     private static final HashMap<UUID, SettingsInv> settingInvs = new HashMap<>();
     private static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
 
@@ -22,7 +21,7 @@ public class Main extends JavaPlugin {
         for (Player player:Bukkit.getOnlinePlayers()){
             settingInvs.put(player.getUniqueId(), new SettingsInv());
         }
-        Bukkit.getPluginManager().registerEvents(new SettingInvListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GlobalOptionController(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
     }
 
