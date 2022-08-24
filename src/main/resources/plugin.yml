@@ -1,0 +1,7 @@
+name: edi
+main: at.theduggy.edi.Main
+version: ${project.version}
+
+commands:
+  settings:
+    description: Opens the EDI-settings!
