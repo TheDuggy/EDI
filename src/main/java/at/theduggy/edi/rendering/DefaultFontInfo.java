@@ -1,4 +1,4 @@
-package at.theduggy.edi.settings.rendering;
+package at.theduggy.edi.rendering;
 
 public enum DefaultFontInfo{
 

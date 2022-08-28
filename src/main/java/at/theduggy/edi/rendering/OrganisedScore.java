@@ -1,4 +1,4 @@
-package at.theduggy.edi.settings.rendering;
+package at.theduggy.edi.rendering;
 
 import at.theduggy.edi.EDIManager;
 import org.bukkit.scoreboard.Objective;
@@ -16,7 +16,7 @@ public class OrganisedScore {
     private Score tmpScore;
 
     public OrganisedScore(EDIManager ediManager, String value, int index) {
-        this.scoreboard = ediManager.getOrganisedObjectiveManager().getScoreboard();
+        this.scoreboard = ediManager.getRenderManager().getScoreboardRenderer().getScoreboard();
         this.value = value;
         this.index = index;
         char[] chars = value.toCharArray();

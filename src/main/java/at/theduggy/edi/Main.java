@@ -1,10 +1,10 @@
 package at.theduggy.edi;
 
-import at.theduggy.edi.settings.GlobalEDIController;
 import at.theduggy.edi.settings.SettingsCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -13,7 +13,8 @@ import java.util.UUID;
 public class Main extends JavaPlugin {
 
     private static final HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
-    private static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
+    public static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
+    public static String logo = ChatColor.DARK_GRAY + "└" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDInfo" + ChatColor.DARK_GRAY + "┘";
 
     @Override
     public void onEnable() {
@@ -26,7 +27,14 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        for (EDIManager ediManager:ediPlayerData.values()){
+            Inventory currentInv = ediManager.getPlayer().getOpenInventory().getTopInventory();
+            if (ediManager.getOptionManager().compareInv(currentInv)||ediManager.getOptionManager().compareDeepOptionIv(currentInv)){
+                ediManager.getPlayer().closeInventory();
+            }
+            ediManager.getRenderManager().getScoreboardRenderer().unregister();
+            ediManager.getRenderManager().getFooterRenderer().reset();
+        }
     }
 
     public static EDIManager getEDIManager(UUID player) {

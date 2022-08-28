@@ -1,20 +1,20 @@
 package at.theduggy.edi;
 
 import at.theduggy.edi.settings.OptionManager;
-import at.theduggy.edi.settings.rendering.ObjectiveManager;
+import at.theduggy.edi.rendering.RenderManager;
 import org.bukkit.entity.Player;
 
 public class EDIManager {
 
     private final OptionManager optionManager;
     private final Player player;
-    private final ObjectiveManager organisedObjectiveManager;
+    private final RenderManager renderManager;
 
 
     public EDIManager(Player player){
         this.player = player;
-        this.organisedObjectiveManager = new ObjectiveManager(this);
         this.optionManager = new OptionManager(this);
+        this.renderManager = new RenderManager(this);
     }
 
     public Player getPlayer() {
@@ -25,7 +25,7 @@ public class EDIManager {
         return optionManager;
     }
 
-    public ObjectiveManager getOrganisedObjectiveManager() {
-        return organisedObjectiveManager;
+    public RenderManager getRenderManager() {
+        return renderManager;
     }
 }

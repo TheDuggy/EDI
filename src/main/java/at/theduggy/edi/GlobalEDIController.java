@@ -1,11 +1,10 @@
-package at.theduggy.edi.settings;
+package at.theduggy.edi;
 
-import at.theduggy.edi.EDIManager;
-import at.theduggy.edi.Main;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,7 +20,7 @@ public class GlobalEDIController implements Listener {
             @Override
             public void run() {
                 for (EDIManager ediManager : Main.getEDIData().values()){
-                    ediManager.getOrganisedObjectiveManager().update();
+                    ediManager.getRenderManager().update();
                 }
             }
         }.runTaskTimer(Main.getPlugin(Main.class), 0,1);
@@ -30,12 +29,14 @@ public class GlobalEDIController implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e){
         Player player = (Player) e.getWhoClicked();
-
-        if (Main.getEDIManager(player.getUniqueId()).getOptionManager().compareInv(e.getInventory())){
-            System.out.println("check");
+        EDIManager ediManager = Main.getEDIManager(player.getUniqueId());
+        if (ediManager.getOptionManager().compareInv(e.getInventory())){
             e.setCancelled(true);
             player.sendMessage("Ev: " + e.getRawSlot());
-            Main.getEDIManager(player.getUniqueId()).getOptionManager().handleClick(e.getRawSlot());
+            ediManager.getOptionManager().handleClick(e.getRawSlot());
+        }else if (ediManager.getOptionManager().compareDeepOptionIv(e.getClickedInventory())){
+            e.setCancelled(true);
+            ediManager.getOptionManager().handelDeepOptionInvClick(e.getRawSlot());
         }
     }
 
@@ -44,26 +45,37 @@ public class GlobalEDIController implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
         if (!Main.getEDIData().containsKey(player.getUniqueId())){
+
             Main.getEDIData().put(player.getUniqueId(), new EDIManager(player));
+        }
+    }
+
+    @EventHandler
+    public void onInvClose(InventoryCloseEvent e){
+        EDIManager ediManager = Main.getEDIManager(e.getPlayer().getUniqueId());
+        if (ediManager.getOptionManager().compareDeepOptionIv(e.getInventory())){
+            ediManager.getOptionManager().setDeepOptionInv(null);
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();
-        Main.getEDIData().get(player.getUniqueId()).getOrganisedObjectiveManager().unregister();
+        Main.getEDIData().get(player.getUniqueId()).getRenderManager().getScoreboardRenderer().unregister();
         Main.getEDIData().remove(player.getUniqueId());
     }
 
 
-    public enum Option {
+    public enum OptionBackend {
         TOGGLE_EDI(4, 0),
+        TOGGLE_FOOTER(5,0),
+        TOGGLE_HEADER(3,0),
         COORDINATES(10,1),
         BIOMES(19,2);
 
         private final int slot;
         private final int displayIndex;
-        Option(int slot, int displayIndex) {
+        OptionBackend(int slot, int displayIndex) {
             this.slot = slot;
             this.displayIndex = displayIndex;
         }
@@ -72,41 +84,18 @@ public class GlobalEDIController implements Listener {
             return slot;
         }
 
-        public int getEnableButtonSlot(){
-            return slot+1;
-        }
-        public int getDisableButtonSlot(){
-            return slot+2;
-        }
-
         public int getDisplayIndex(){
             return displayIndex;
         }
 
-        private static final Map<Integer, Option> slotToOption = new HashMap<>();
+        private static final Map<Integer, OptionBackend> slotToOption = new HashMap<>();
         static {
-            for (Option option:values()){
+            for (OptionBackend option:values()){
                 slotToOption.put(option.slot, option); //Add the main slot
-                slotToOption.put(option.slot+1, option); //Add enable-slot
-                slotToOption.put(option.slot+2, option); //Add disable-slot
             }
         }
-        public static Option fromSlot(int slot){
+        public static OptionBackend fromSlot(int slot){
             return slotToOption.getOrDefault(slot, null);
-        }
-
-        public static List<Integer> getEnableButtonSlots(){
-            List<Integer> enableButtonSlots = new ArrayList<>();
-            Arrays.stream(values()).forEach(option -> enableButtonSlots.add(option.getEnableButtonSlot()));
-            System.out.println(enableButtonSlots);
-            return enableButtonSlots;
-        }
-
-        public static List<Integer> getDisableButtonSlots(){
-            List<Integer> disableButtonSlots = new ArrayList<>();
-            Arrays.stream(values()).forEach(option -> disableButtonSlots.add(option.getDisableButtonSlot()));
-            System.out.println(disableButtonSlots);
-            return disableButtonSlots;
         }
 
     }
