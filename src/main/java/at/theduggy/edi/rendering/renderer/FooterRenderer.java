@@ -2,20 +2,17 @@ package at.theduggy.edi.rendering.renderer;
 
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.Main;
-import at.theduggy.edi.rendering.EDIUpdateData;
 import at.theduggy.edi.settings.OptionManager;
+import at.theduggy.edi.settings.options.Option;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 
 public class FooterRenderer{
-    private EDIManager ediManager;
+    private final EDIManager ediManager;
     private boolean footerRendered = false;
-    private final EDIUpdateData ediUpdateData;
     private String oldFooter = null;
 
     public FooterRenderer(EDIManager ediManager) {
         this.ediManager = ediManager;
-        this.ediUpdateData = new EDIUpdateData(ediManager);
     }
 
     public void render(){
@@ -30,14 +27,11 @@ public class FooterRenderer{
             if (!ediManager.getOptionManager().isHeaderEnabled()){
                 footer.append(Main.logo + ChatColor.RESET);
             }
-
-            if (optionManager.getCords().isFooter()){
-                footer.append((optionManager.getCords().isShowKeys()?"\nCords: " : "\n") + ediUpdateData.getCordsValue() + "\n");
+            for (Option o : optionManager.getRegisteredOptions().values()){
+                if (o.isFooter()){
+                    footer.append((o.isShowKeys()?"\n" + o.getName() + ": " : "\n") + o.getValue(ediManager.getPlayer()) + "\n");
+                }
             }
-            if (optionManager.getBiome().isFooter()){
-                footer.append((optionManager.getBiome().isShowKeys()?"\nBiome: " : "\n") + ediUpdateData.getBiomeValue() + "\n");
-            }
-
             ediManager.getPlayer().setPlayerListFooter(footer.toString());
         }else {
             if (footerRendered){

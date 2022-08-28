@@ -15,7 +15,7 @@ public class SettingsCommand implements CommandExecutor {
             if (strings.length==0){
                 Main.getEDIManager(player.getUniqueId()).getOptionManager().show();
             }else {
-                player.sendMessage(Main.getPrefix() + ChatColor.RED + "No arguments a re allowed!");
+                player.sendMessage(Main.getPrefix() + ChatColor.RED + "No arguments are allowed!");
             }
         }
         return false;

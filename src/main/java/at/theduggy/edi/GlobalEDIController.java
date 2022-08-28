@@ -32,7 +32,6 @@ public class GlobalEDIController implements Listener {
         EDIManager ediManager = Main.getEDIManager(player.getUniqueId());
         if (ediManager.getOptionManager().compareInv(e.getInventory())){
             e.setCancelled(true);
-            player.sendMessage("Ev: " + e.getRawSlot());
             ediManager.getOptionManager().handleClick(e.getRawSlot());
         }else if (ediManager.getOptionManager().compareDeepOptionIv(e.getClickedInventory())){
             e.setCancelled(true);
@@ -63,41 +62,6 @@ public class GlobalEDIController implements Listener {
         Player player = e.getPlayer();
         Main.getEDIData().get(player.getUniqueId()).getRenderManager().getScoreboardRenderer().unregister();
         Main.getEDIData().remove(player.getUniqueId());
-    }
-
-
-    public enum OptionBackend {
-        TOGGLE_EDI(4, 0),
-        TOGGLE_FOOTER(5,0),
-        TOGGLE_HEADER(3,0),
-        COORDINATES(10,1),
-        BIOMES(19,2);
-
-        private final int slot;
-        private final int displayIndex;
-        OptionBackend(int slot, int displayIndex) {
-            this.slot = slot;
-            this.displayIndex = displayIndex;
-        }
-
-        public int getMainSlot(){
-            return slot;
-        }
-
-        public int getDisplayIndex(){
-            return displayIndex;
-        }
-
-        private static final Map<Integer, OptionBackend> slotToOption = new HashMap<>();
-        static {
-            for (OptionBackend option:values()){
-                slotToOption.put(option.slot, option); //Add the main slot
-            }
-        }
-        public static OptionBackend fromSlot(int slot){
-            return slotToOption.getOrDefault(slot, null);
-        }
-
     }
 
 }

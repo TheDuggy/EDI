@@ -3,9 +3,9 @@ package at.theduggy.edi.rendering.renderer;
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.GlobalEDIController;
 import at.theduggy.edi.rendering.DefaultFontInfo;
-import at.theduggy.edi.rendering.EDIUpdateData;
 import at.theduggy.edi.rendering.OrganisedScore;
 import at.theduggy.edi.settings.OptionManager;
+import at.theduggy.edi.settings.options.Option;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -18,7 +18,6 @@ import java.util.Collections;
 public class ScoreboardRenderer {
 
     private final EDIManager ediManager;
-    private final EDIUpdateData ediUpdateData;
     private final Objective objective;
     private final Scoreboard scoreboard;
 
@@ -27,7 +26,6 @@ public class ScoreboardRenderer {
     private final ArrayList<OrganisedScore> tempOrganisedScores = new ArrayList<>();
 
     public ScoreboardRenderer(EDIManager ediManager){
-        this.ediUpdateData = new EDIUpdateData(ediManager);
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         this.objective = scoreboard.registerNewObjective("edi-display", "dummy", ChatColor.DARK_GRAY + "└" + ChatColor.GOLD + "" +ChatColor.BOLD + "EDInfo"+ ChatColor.DARK_GRAY + "┘");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -36,28 +34,24 @@ public class ScoreboardRenderer {
     }
 
     public void render(){
+        currentScore = 0;
         OptionManager optionManager = ediManager.getOptionManager();
         if (ediManager.getOptionManager().isDisplayEnabled()){
             if (hidden){
-                System.out.println("TEST");
                 show(); //Shows the objective again if it was disabled!
             }
             if (organisedScores.size()==0){
-                OrganisedScore cords = new OrganisedScore(ediManager, (optionManager.getCords().isShowKeys()?"Cords: " : "") + ediUpdateData.getCordsValue(), GlobalEDIController.OptionBackend.COORDINATES.getDisplayIndex());
-                organisedScores.add(cords);
-                if (ediManager.getOptionManager().getCords().isEdiDisplay()){
-                    cords.render();
-                    tempOrganisedScores.add(cords);
+                System.out.println(ediManager.getOptionManager().getRegisteredOptions());
+                for (Option o : ediManager.getOptionManager().getRegisteredOptions().values()){
+                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getName() + ":" + " ":"") + o.getValue(ediManager.getPlayer()), currentScore++);
+                    organisedScores.add(organisedScore);
+                    if (o.isEdiDisplay()){
+                        organisedScore.render();
+                        tempOrganisedScores.add(organisedScore);
+                    }
                 }
 
-                OrganisedScore biom = new OrganisedScore(ediManager, (optionManager.getBiome().isShowKeys()?"Biome: " : "") + ediUpdateData.getBiomeValue(), GlobalEDIController.OptionBackend.BIOMES.getDisplayIndex());
-                organisedScores.add(biom);
-                if (ediManager.getOptionManager().getBiome().isEdiDisplay()){
-                    biom.render();
-                    tempOrganisedScores.add(biom);
-                }
-
-                OrganisedScore separator = new OrganisedScore(ediManager, calculateSeparator(),0);
+                OrganisedScore separator = new OrganisedScore(ediManager, null, calculateSeparator(),0);
                 separator.render();
                 organisedScores.add(separator);
                 separator.setScore(tempOrganisedScores.size());
@@ -68,21 +62,17 @@ public class ScoreboardRenderer {
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }else {
                 tempOrganisedScores.clear();
-                if (ediManager.getOptionManager().getCords().isEdiDisplay()){
-                    organisedScores.get(GlobalEDIController.OptionBackend.COORDINATES.getDisplayIndex()-1).update((optionManager.getCords().isShowKeys()?"Cords: " : "") + ediUpdateData.getCordsValue());
-                    tempOrganisedScores.add(organisedScores.get(0));
-                }else {
-                    if (organisedScores.get(GlobalEDIController.OptionBackend.COORDINATES.getDisplayIndex()-1).isRendered()){
-                        organisedScores.get(GlobalEDIController.OptionBackend.COORDINATES.getDisplayIndex()-1).remove();
-                    }
-                }
 
-                if (ediManager.getOptionManager().getBiome().isEdiDisplay()){
-                    organisedScores.get(GlobalEDIController.OptionBackend.BIOMES.getDisplayIndex()-1).update((optionManager.getBiome().isShowKeys()?"Biome: " : "") + ediUpdateData.getBiomeValue());
-                    tempOrganisedScores.add(organisedScores.get(1));
-                }else {
-                    if (organisedScores.get(GlobalEDIController.OptionBackend.BIOMES.getDisplayIndex()-1).isRendered()){
-                        organisedScores.get(GlobalEDIController.OptionBackend.BIOMES.getDisplayIndex()-1).remove();
+                for (OrganisedScore organisedScore : organisedScores){
+                    if (organisedScore.getOption()!=null){
+                        if (organisedScore.getOption().isEdiDisplay()){
+                            organisedScore.update((organisedScore.getOption().isShowKeys()?organisedScore.getOption().getName() + ": ":"") + organisedScore.getOption().getValue(ediManager.getPlayer()));
+                            tempOrganisedScores.add(organisedScore);
+                        }else {
+                            if (organisedScore.isRendered()){
+                                organisedScore.remove();
+                            }
+                        }
                     }
                 }
 
@@ -113,6 +103,8 @@ public class ScoreboardRenderer {
         hidden = false;
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
+
+    private int currentScore = 0;
 
     private String calculateSeparator(){
         ArrayList<Integer> lengths = new ArrayList<>();

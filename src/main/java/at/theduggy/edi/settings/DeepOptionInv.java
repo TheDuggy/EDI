@@ -1,5 +1,6 @@
 package at.theduggy.edi.settings;
 
+import at.theduggy.edi.settings.options.Option;
 import org.bukkit.inventory.Inventory;
 
 public class DeepOptionInv {

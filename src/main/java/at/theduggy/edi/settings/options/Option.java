@@ -1,14 +1,21 @@
-package at.theduggy.edi.settings;
+package at.theduggy.edi.settings.options;
 
-public class Option {
+import org.bukkit.entity.Player;
+
+public abstract class Option {
 
     private boolean showKeys;
     private boolean header;
     private boolean footer;
     private boolean ediDisplay;
+    private final String optionName;
+    private final String optionInfo;
+    private int invSlot;
 
 
-    public Option(boolean header, boolean footer, boolean edi_display, boolean showKeys) {
+    public Option(String optionName, String optionInfo, boolean header, boolean footer, boolean edi_display, boolean showKeys) {
+        this.optionInfo = optionInfo;
+        this.optionName = optionName;
         this.header = header;
         this.footer = footer;
         this.ediDisplay = edi_display;
@@ -46,6 +53,24 @@ public class Option {
     public void setShowKeys(boolean showKeys) {
         this.showKeys = showKeys;
     }
+
+    public String getName() {
+        return optionName;
+    }
+
+    public int getInvSlot() {
+        return invSlot;
+    }
+
+    public void setInvSlot(int slot){
+        this.invSlot = slot;
+    }
+
+    public String getInfo() {
+        return optionInfo;
+    }
+
+    public abstract String getValue(Player player);
 
 
 

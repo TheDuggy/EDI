@@ -1,49 +1,66 @@
 package at.theduggy.edi.settings;
 
 import at.theduggy.edi.EDIManager;
+import at.theduggy.edi.Main;
+import at.theduggy.edi.settings.options.BiomeOption;
+import at.theduggy.edi.settings.options.CordsOption;
+import at.theduggy.edi.settings.options.Option;
+import at.theduggy.edi.settings.options.RealTimeOption;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
-import at.theduggy.edi.GlobalEDIController.OptionBackend;
-
-public class OptionManager {
+public class OptionManager{
 
     //The actual inventory
     private Inventory optionInventory = null;
     private DeepOptionInv deepOptionInv = null;
 
     //basic on-tob options
-    private boolean displayEnabled = true;
-    private boolean headerEnabled = false;
-    private boolean footerEnabled = false;
+    private Boolean displayEnabled = true;
+    private Boolean headerEnabled = false;
+    private Boolean footerEnabled = false;
 
-    public Option getCords() {
-        return cords;
-    }
+    private final TreeMap<String, Option> options = new TreeMap<>();
 
-    public Option getBiome() {
-        return biomes;
-    }
-
-    //all options which can be used
-    private final Option cords = new Option(false, false, true, true);
-    private final Option biomes  = new Option(false, false, true, true);
     private final EDIManager ediManager;
 
     public OptionManager(EDIManager ediManager){
         this.ediManager = ediManager;
+        registerOption(new CordsOption("Cords", "Shows your current cords",false, false, true, true));
+        registerOption(new BiomeOption("Biome","Shows your current biome", false, false, true, true));
+        registerOption(new RealTimeOption("Real-time", "Shows you real-time", false, false, true, true));
     }
 
-    public void addOnTopToggle(Material type, String displayName, String info, boolean enabled, int slot){
+    private void refreshOptionInventory(){
+        optionInventory = Bukkit.createInventory(null,54,"EDI Settings");
+        addFixedButtons(Material.YELLOW_STAINED_GLASS_PANE, "EDInfo-Screen", "Enables/disbales the EDInfo-Screen", displayEnabled, 4);
+        addFixedButtons(Material.LEATHER_HELMET, "EDInfo-Header", "Enables/disbales the EDInfo-Header", headerEnabled, 3);
+        addFixedButtons(Material.LEATHER_BOOTS, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", footerEnabled, 5);
+        for (Option option: options.values()){
+            //Create all options on the gui
+            ItemStack sign = new ItemStack(Material.SIGN);
+            ItemMeta itemMeta = sign.getItemMeta();
+            itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC +option.getInfo()));
+            itemMeta.setDisplayName(ChatColor.GOLD + option.getName());
+            if (option.isFooter()||option.isHeader()||option.isEdiDisplay()){
+                itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            sign.setItemMeta(itemMeta);
+            optionInventory.setItem(option.getInvSlot(), sign);
+        }
+    }
+
+    public void addFixedButtons(Material type, String displayName, String info, boolean enabled, int slot){
         ItemStack itemStack = new ItemStack(type);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setLore(Arrays.asList( ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + info));
@@ -58,30 +75,8 @@ public class OptionManager {
         optionInventory.setItem(slot, itemStack);
     }
 
-    //Method to create each option
-    private void addSettingsOption(int slot,String name, String info, Option option){
-        ItemStack sign = new ItemStack(Material.SIGN);
-        ItemMeta itemMeta = sign.getItemMeta();
-        itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + info));
-        itemMeta.setDisplayName(ChatColor.GOLD + name);
-        if (option.isFooter()||option.isHeader()||option.isEdiDisplay()){
-            itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        sign.setItemMeta(itemMeta);
-        optionInventory.setItem(slot, sign);
-    }
-
-    private void refreshOptionInventorry(){
-        optionInventory = Bukkit.createInventory(null,54,"EDI Settings");
-        addOnTopToggle(Material.YELLOW_STAINED_GLASS_PANE, "EDInfo-Screen", "Enables/disbales the EDInfo-Screen", displayEnabled, 4);
-        addOnTopToggle(Material.LEATHER_HELMET, "EDInfo-Header", "Enables/disbales the EDInfo-Header", headerEnabled, 3);
-        addOnTopToggle(Material.LEATHER_BOOTS, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", footerEnabled, 5);
-        addSettingsOption(OptionBackend.COORDINATES.getMainSlot(), "Cords", "Shows you your current block-coordinates!", cords);
-        addSettingsOption(OptionBackend.BIOMES.getMainSlot(), "Biom", "Shows your current biom!", biomes);
-    }
-
-    private void refreshDeepOptionInventory(String optionName, Option option){
+    private void refreshDeepOptionInventory(Option option){
+        String optionName = option.getName();
         Inventory inventory = Bukkit.createInventory(null,9, "[EDI] " + optionName);
         deepOptionInv = new DeepOptionInv(inventory, option);
         ItemStack header = new ItemStack(Material.LEATHER_HELMET);
@@ -144,66 +139,57 @@ public class OptionManager {
 
     //This method is used to show the inv to the player and update it
     public void show(){
-        refreshOptionInventorry();
+        refreshOptionInventory();
         ediManager.getPlayer().openInventory(optionInventory);
+    }
+
+    public void updateOnTobToggle(int slot){
+        switch (slot){
+            case 3:
+                headerEnabled = updateButton(headerEnabled, "EDInfo-Header", slot, optionInventory);
+                break;
+
+            case 4:
+                displayEnabled = updateButton(displayEnabled, "EDInfo-Screen", slot, optionInventory);
+                break;
+
+            case 5:
+                footerEnabled = updateButton(footerEnabled, "EDInfo-Footer", slot, optionInventory);
+                break;
+        }
+    }
+
+    public boolean updateButton(boolean enabled, String displayName, int slot, Inventory inventory){
+        ItemStack itemStack = inventory.getItem(slot);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (enabled){
+            if (itemMeta.hasEnchant(Enchantment.KNOCKBACK)){
+                itemMeta.removeEnchant(Enchantment.KNOCKBACK);
+            }
+            itemMeta.setDisplayName(ChatColor.RED + displayName);
+            itemStack.setItemMeta(itemMeta);
+            return false;
+        }else {
+            itemMeta.setDisplayName(ChatColor.GREEN + displayName);
+            itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            itemStack.setItemMeta(itemMeta);
+            return true;
+        }
     }
 
     //This method is executed from the GlobalOptionController each time an item is clicked in this inv
     public void handleClick(int slot){
-        if (OptionBackend.fromSlot(slot)== OptionBackend.COORDINATES){
-            refreshDeepOptionInventory("Cords", cords);
+        final int ediScreen = 4;
+        final int footer = 5;
+        final int header = 3;
+        HashMap<Integer, Option> optionsWithSlots = new HashMap<>();
+        options.forEach((id, option) -> optionsWithSlots.put(option.getInvSlot(), option));
+        if (optionsWithSlots.containsKey(slot)) {
+            refreshDeepOptionInventory(optionsWithSlots.get(slot));
             ediManager.getPlayer().openInventory(deepOptionInv.getDeepOptionInv());
-        }else if (OptionBackend.fromSlot(slot)== OptionBackend.BIOMES){
-            refreshDeepOptionInventory("Biomes", biomes);
-            ediManager.getPlayer().openInventory(deepOptionInv.getDeepOptionInv());
-        } else if (OptionBackend.fromSlot(slot) == OptionBackend.TOGGLE_EDI){
-            ItemStack ediDisplay = optionInventory.getItem(slot);
-            ItemMeta ediDisplayMeta = ediDisplay.getItemMeta();
-            if (displayEnabled){
-                displayEnabled = false;
-                if (ediDisplayMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                    ediDisplayMeta.removeEnchant(Enchantment.KNOCKBACK);
-                }
-                ediDisplayMeta.setDisplayName(ChatColor.RED + "EDInfo-Screen");
-            }else {
-                displayEnabled = true;
-                ediDisplayMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Screen");
-                ediDisplayMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
-                ediDisplayMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            }
-            ediDisplay.setItemMeta(ediDisplayMeta);
-        }else if (OptionBackend.fromSlot(slot) == OptionBackend.TOGGLE_HEADER){
-            ItemStack header = optionInventory.getItem(slot);
-            ItemMeta headerMeta = header.getItemMeta();
-            if (headerEnabled){
-                headerMeta.setDisplayName(ChatColor.RED + "EDInfo-Header");
-                if (headerMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                    headerMeta.removeEnchant(Enchantment.KNOCKBACK);
-                }
-                headerEnabled = false;
-            }else {
-                headerMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Header");
-                headerMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                headerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                headerEnabled = true;
-            }
-            header.setItemMeta(headerMeta);
-        }else if (OptionBackend.fromSlot(slot) == OptionBackend.TOGGLE_FOOTER){
-            ItemStack footer = optionInventory.getItem(slot);
-            ItemMeta footerMeta = footer.getItemMeta();
-            if (footerEnabled){
-                footerMeta.setDisplayName(ChatColor.RED + "EDInfo-Footer");
-                if (footerMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                    footerMeta.removeEnchant(Enchantment.KNOCKBACK);
-                }
-                footerEnabled = false;
-            }else {
-                footerMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Footer");
-                footerMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                footerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                footerEnabled = true;
-            }
-            footer.setItemMeta(footerMeta);
+        }else if (Arrays.asList(ediScreen,footer,header).contains(slot)){
+            updateOnTobToggle(slot);
         }
     }
 
@@ -212,72 +198,15 @@ public class OptionManager {
         final int headerSlot = 3;
         final int footerSlot = 4;
         final int edInfoDisplaySlot = 5;
-
         if (Arrays.asList(showKeysSlot, headerSlot, footerSlot, edInfoDisplaySlot).contains(slot)){
             if (slot == showKeysSlot){
-                ItemStack showKeys = deepOptionInv.getDeepOptionInv().getItem(slot);
-                ItemMeta showKeysMeta = showKeys.getItemMeta();
-                if (deepOptionInv.getOption().isShowKeys()){
-                    showKeysMeta.setDisplayName(ChatColor.RED + "Show keys");
-                    if (showKeysMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                        showKeysMeta.removeEnchant(Enchantment.KNOCKBACK);
-                    }
-                    deepOptionInv.getOption().setShowKeys(false);
-                }else {
-                    showKeysMeta.setDisplayName(ChatColor.GREEN + "Show keys");
-                    showKeysMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                    showKeysMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    deepOptionInv.getOption().setShowKeys(true);
-                }
-                showKeys.setItemMeta(showKeysMeta);
+                deepOptionInv.getOption().setEdiDisplay(updateButton(deepOptionInv.getOption().isShowKeys(), "Show keys", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == edInfoDisplaySlot){
-                ItemStack edInfoDisplay = deepOptionInv.getDeepOptionInv().getItem(slot);
-                ItemMeta edInfoDisplayMeta = edInfoDisplay.getItemMeta();
-                if (deepOptionInv.getOption().isEdiDisplay()){
-                    edInfoDisplayMeta.setDisplayName(ChatColor.RED + "EDInfo-Screen");
-                    if (edInfoDisplayMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                        edInfoDisplayMeta.removeEnchant(Enchantment.KNOCKBACK);
-                    }
-                    deepOptionInv.getOption().setEdiDisplay(false);
-                }else {
-                    edInfoDisplayMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Screen");
-                    edInfoDisplayMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                    edInfoDisplayMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    deepOptionInv.getOption().setEdiDisplay(true);
-                }
-                edInfoDisplay.setItemMeta(edInfoDisplayMeta);
+                deepOptionInv.getOption().setEdiDisplay(updateButton(deepOptionInv.getOption().isEdiDisplay(), "EDInfo-Screen", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == headerSlot){
-                ItemStack header = deepOptionInv.getDeepOptionInv().getItem(slot);
-                ItemMeta headerMeta = header.getItemMeta();
-                if (deepOptionInv.getOption().isHeader()){
-                    headerMeta.setDisplayName(ChatColor.RED + "EDInfo-Header");
-                    if (headerMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                        headerMeta.removeEnchant(Enchantment.KNOCKBACK);
-                    }
-                    deepOptionInv.getOption().setHeader(false);
-                }else {
-                    headerMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Header");
-                    headerMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                    headerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    deepOptionInv.getOption().setHeader(true);
-                }
-                header.setItemMeta(headerMeta);
+                deepOptionInv.getOption().setHeader(updateButton(deepOptionInv.getOption().isHeader(), "EDInfo-Header", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == footerSlot){
-                ItemStack footer = deepOptionInv.getDeepOptionInv().getItem(slot);
-                ItemMeta footerMeta = footer.getItemMeta();
-                if (deepOptionInv.getOption().isFooter()){
-                    footerMeta.setDisplayName(ChatColor.RED + "EDInfo-Footer");
-                    if (footerMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                        footerMeta.removeEnchant(Enchantment.KNOCKBACK);
-                    }
-                    deepOptionInv.getOption().setFooter(false);
-                }else {
-                    footerMeta.setDisplayName(ChatColor.GREEN + "EDInfo-Footer");
-                    footerMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-                    footerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    deepOptionInv.getOption().setFooter(true);
-                }
-                footer.setItemMeta(footerMeta);
+                deepOptionInv.getOption().setFooter(updateButton(deepOptionInv.getOption().isFooter(), "EDInfo-Footer", slot, deepOptionInv.getDeepOptionInv()));
             }
         }
     }
@@ -300,12 +229,37 @@ public class OptionManager {
         return toCompare.equals(optionInventory);
     }
 
+    public void registerOption(Option option){
+        int slot = 13;
+        ArrayList<Integer> keys = new ArrayList<>();
+        options.forEach((s, option1) -> keys.add(option1.getInvSlot()));
+        if (options.size()==0){
+            slot = 10;
+        }else if (Arrays.asList(37,39,41).contains(keys.get(keys.size()-1))){
+                slot = keys.get(keys.size()-1)-25;
+        }else if (keys.get(keys.size()-1)<43){
+            slot = keys.get(keys.size()-1) + 9;
+        }
+        System.out.println(slot);
+        if (slot > 0){
+            option.setInvSlot(slot);
+            options.put(new NamespacedKey(Main.getPlugin(Main.class), option.getName() + "_option").toString(), option);
+        }else {
+            throw new IllegalArgumentException("Options are full!"); //TODO Remove !!!
+        }
+
+    }
+
     public boolean compareDeepOptionIv(Inventory inventory){
         if (deepOptionInv==null){
             return false;
         }else {
             return inventory.equals(deepOptionInv.getDeepOptionInv());
         }
+    }
+
+    public TreeMap<String, Option> getRegisteredOptions() {
+        return options;
     }
 
     public void setDeepOptionInv(DeepOptionInv deepOptionInv) {

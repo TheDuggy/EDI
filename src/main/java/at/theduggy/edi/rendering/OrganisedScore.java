@@ -1,6 +1,8 @@
 package at.theduggy.edi.rendering;
 
 import at.theduggy.edi.EDIManager;
+import at.theduggy.edi.settings.OptionManager;
+import at.theduggy.edi.settings.options.Option;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -14,11 +16,13 @@ public class OrganisedScore {
     private final Objective objective;
     private int msgLength = 0;
     private Score tmpScore;
+    private final Option option;
 
-    public OrganisedScore(EDIManager ediManager, String value, int index) {
+    public OrganisedScore(EDIManager ediManager, Option option, String value, int index) {
         this.scoreboard = ediManager.getRenderManager().getScoreboardRenderer().getScoreboard();
         this.value = value;
         this.index = index;
+        this.option = option;
         char[] chars = value.toCharArray();
         for (char c : chars){
             msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
@@ -64,5 +68,9 @@ public class OrganisedScore {
 
     public String getValue() {
         return value;
+    }
+
+    public Option getOption() {
+        return option;
     }
 }
