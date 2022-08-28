@@ -24,7 +24,7 @@ public class GlobalEDIController implements Listener {
                     ediManager.getOrganisedObjectiveManager().update();
                 }
             }
-        }.runTaskTimer(Main.getPlugin(Main.class), 0,5);
+        }.runTaskTimer(Main.getPlugin(Main.class), 0,1);
     }
 
     @EventHandler
@@ -57,13 +57,15 @@ public class GlobalEDIController implements Listener {
 
 
     public enum Option {
-        TOGGLE_EDI(4),
-        COORDINATES(10),
-        BIOMES(19);
+        TOGGLE_EDI(4, 0),
+        COORDINATES(10,1),
+        BIOMES(19,2);
 
         private final int slot;
-        Option(int slot) {
+        private final int displayIndex;
+        Option(int slot, int displayIndex) {
             this.slot = slot;
+            this.displayIndex = displayIndex;
         }
 
         public int getMainSlot(){
@@ -75,6 +77,10 @@ public class GlobalEDIController implements Listener {
         }
         public int getDisableButtonSlot(){
             return slot+2;
+        }
+
+        public int getDisplayIndex(){
+            return displayIndex;
         }
 
         private static final Map<Integer, Option> slotToOption = new HashMap<>();
