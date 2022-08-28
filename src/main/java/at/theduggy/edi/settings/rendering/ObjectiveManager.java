@@ -10,6 +10,7 @@ import at.theduggy.edi.settings.GlobalEDIController.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class ObjectiveManager {
 
@@ -42,7 +43,7 @@ public class ObjectiveManager {
             chars[0] = Character.toUpperCase(chars[0]);
             playerBiom.append(i!=playerBiomSplit.length-1? new String(chars) + " ": new String(chars));
         }
-        
+
         if (ediManager.getOptionManager().isDisplayEnabled()){
             if (hidden){
                 System.out.println("TEST");
@@ -50,8 +51,6 @@ public class ObjectiveManager {
             }
             ediManager.getPlayer().setScoreboard(scoreboard);
             if (organisedScores.size()==0){
-                Score separator = objective.getScore(ChatColor.GREEN + "=-=-=-=-=-=-=-=");
-                separator.setScore(2);
 
                 OrganisedScore cords = new OrganisedScore(ediManager, "Cords: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ(), Option.COORDINATES.getDisplayIndex());
                 organisedScores.add(cords);
@@ -67,6 +66,11 @@ public class ObjectiveManager {
                     biom.render();
                     tempOrganisedScores.add(biom);
                 }
+
+                OrganisedScore separator = new OrganisedScore(ediManager, calculateSeparator(),0);
+                separator.render();
+                organisedScores.add(separator);
+                separator.setScore(tempOrganisedScores.size());
 
                 for (int i = 0,counter = tempOrganisedScores.size()-1;i<tempOrganisedScores.size();i++,counter--){
                     tempOrganisedScores.get(i).setScore(counter);
@@ -92,6 +96,8 @@ public class ObjectiveManager {
                     }
                 }
 
+                organisedScores.get(organisedScores.size()-1).update(calculateSeparator());
+                organisedScores.get(organisedScores.size()-1).setScore(tempOrganisedScores.size());
                 for (int i = 0,counter = tempOrganisedScores.size()-1;i<tempOrganisedScores.size();i++,counter--){
                     tempOrganisedScores.get(i).setScore(counter);
                 }
@@ -116,6 +122,22 @@ public class ObjectiveManager {
     private void show(){
         hidden = false;
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    }
+
+    private String calculateSeparator(){
+        ArrayList<Integer> lengths = new ArrayList<>();
+        tempOrganisedScores.forEach(organisedScore ->lengths.add(organisedScore.getLength()));
+        String separatorString = "=".repeat((int) Math.ceil((Collections.max(lengths)/ (double) DefaultFontInfo.EQUALS_SIGN.getLength())));
+        char[] separatorChars = separatorString.toCharArray();
+        for (int i = 1; i<separatorChars.length;i+=2){
+            separatorChars[i] = '-';
+        }
+        if (separatorChars[separatorChars.length-1] =='-'){
+            return ChatColor.GREEN + new String(separatorChars) + "=";
+        }else {
+            return ChatColor.GREEN + new String(separatorChars);
+        }
+
     }
 
     public Scoreboard getScoreboard() {

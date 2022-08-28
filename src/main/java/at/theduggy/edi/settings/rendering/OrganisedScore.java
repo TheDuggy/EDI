@@ -5,23 +5,24 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.ArrayList;
-
 public class OrganisedScore {
 
     private Scoreboard scoreboard;
-    private EDIManager ediManager;
     private String value;
     private final int index;
     private boolean rendered;
     private final Objective objective;
+    private int msgLength = 0;
     private Score tmpScore;
 
     public OrganisedScore(EDIManager ediManager, String value, int index) {
         this.scoreboard = ediManager.getOrganisedObjectiveManager().getScoreboard();
-        this.ediManager = ediManager;
         this.value = value;
         this.index = index;
+        char[] chars = value.toCharArray();
+        for (char c : chars){
+            msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
+        }
         objective = scoreboard.getObjective("edi-display");
     }
 
@@ -35,6 +36,11 @@ public class OrganisedScore {
         rendered = true;
         scoreboard.resetScores(this.value);
         this.value = value;
+        char[] chars = value.toCharArray();
+        msgLength = 0;
+        for (char c : chars){
+            msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
+        }
         tmpScore = objective.getScore(value);
         tmpScore.setScore(index);
 
@@ -52,4 +58,11 @@ public class OrganisedScore {
         scoreboard.resetScores(value);
     }
 
+    public int getLength() {
+        return msgLength;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
