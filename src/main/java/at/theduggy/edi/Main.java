@@ -1,8 +1,7 @@
 package at.theduggy.edi;
 
-import at.theduggy.edi.settings.GlobalOptionController;
+import at.theduggy.edi.settings.GlobalEDIController;
 import at.theduggy.edi.settings.SettingsCommand;
-import at.theduggy.edi.settings.SettingsInv;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,15 +12,15 @@ import java.util.UUID;
 
 public class Main extends JavaPlugin {
 
-    private static final HashMap<UUID, SettingsInv> settingInvs = new HashMap<>();
+    private static final HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
     private static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
 
     @Override
     public void onEnable() {
         for (Player player:Bukkit.getOnlinePlayers()){
-            settingInvs.put(player.getUniqueId(), new SettingsInv());
+            ediPlayerData.put(player.getUniqueId(), new EDIManager(player));
         }
-        Bukkit.getPluginManager().registerEvents(new GlobalOptionController(), this);
+        Bukkit.getPluginManager().registerEvents(new GlobalEDIController(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
     }
 
@@ -30,12 +29,12 @@ public class Main extends JavaPlugin {
 
     }
 
-    public static SettingsInv getSettingsInv(UUID player) {
-        return settingInvs.get(player);
+    public static EDIManager getEDIManager(UUID player) {
+        return ediPlayerData.get(player);
     }
 
-    public static HashMap<UUID, SettingsInv> getSettingInvs() {
-        return settingInvs;
+    public static HashMap<UUID, EDIManager> getEDIData() {
+        return ediPlayerData;
     }
 
     public static String getPrefix() {

@@ -13,7 +13,7 @@ public class SettingsCommand implements CommandExecutor {
         if (commandSender instanceof Player){
             Player player = (Player) commandSender;
             if (strings.length==0){
-                Main.getSettingsInv(player.getUniqueId()).show(player);
+                Main.getEDIManager(player.getUniqueId()).getOptionManager().show();
             }else {
                 player.sendMessage(Main.getPrefix() + ChatColor.RED + "No arguments a re allowed!");
             }
