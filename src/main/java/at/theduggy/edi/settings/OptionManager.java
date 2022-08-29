@@ -2,10 +2,7 @@ package at.theduggy.edi.settings;
 
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.Main;
-import at.theduggy.edi.settings.options.BiomeOption;
-import at.theduggy.edi.settings.options.CordsOption;
-import at.theduggy.edi.settings.options.Option;
-import at.theduggy.edi.settings.options.RealTimeOption;
+import at.theduggy.edi.settings.options.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,9 +22,9 @@ public class OptionManager{
     private DeepOptionInv deepOptionInv = null;
 
     //basic on-tob options
-    private Boolean displayEnabled = true;
-    private Boolean headerEnabled = false;
-    private Boolean footerEnabled = false;
+    private boolean displayEnabled = true;
+    private boolean headerEnabled = false;
+    private boolean footerEnabled = false;
 
     private final TreeMap<String, Option> options = new TreeMap<>();
 
@@ -37,7 +34,8 @@ public class OptionManager{
         this.ediManager = ediManager;
         registerOption(new CordsOption("Cords", "Shows your current cords",false, false, true, true));
         registerOption(new BiomeOption("Biome","Shows your current biome", false, false, true, true));
-        registerOption(new RealTimeOption("Real-time", "Shows you real-time", false, false, true, true));
+        registerOption(new RealTimeOption("Real-time", "Shows you the current real-time", false, false, true, true));
+        registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time", false, false, true, true));
     }
 
     private void refreshOptionInventory(){
@@ -45,6 +43,14 @@ public class OptionManager{
         addFixedButtons(Material.YELLOW_STAINED_GLASS_PANE, "EDInfo-Screen", "Enables/disbales the EDInfo-Screen", displayEnabled, 4);
         addFixedButtons(Material.LEATHER_HELMET, "EDInfo-Header", "Enables/disbales the EDInfo-Header", headerEnabled, 3);
         addFixedButtons(Material.LEATHER_BOOTS, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", footerEnabled, 5);
+
+        //Crate the close-button
+        ItemStack close = new ItemStack(Material.BARRIER);
+        ItemMeta closeMeta = close.getItemMeta();;
+        closeMeta.setDisplayName(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "Close" + ChatColor.DARK_GRAY + "]");
+        close.setItemMeta(closeMeta);
+        optionInventory.setItem(49, close);
+
         for (Option option: options.values()){
             //Create all options on the gui
             ItemStack sign = new ItemStack(Material.SIGN);
@@ -83,6 +89,10 @@ public class OptionManager{
         ItemStack footer = new ItemStack(Material.LEATHER_BOOTS);
         ItemStack ediDisplay = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
         ItemStack showKeys = new ItemStack(Material.TRIPWIRE_HOOK);
+        ItemStack back = new ItemStack(Material.ARROW);
+        ItemStack upDownPosition = new ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA);
+        ItemMeta upDownPositionMeta = upDownPosition.getItemMeta();
+        ItemMeta backMeta = back.getItemMeta();
         ItemMeta headerMeta = header.getItemMeta();
         ItemMeta footerMeta = footer.getItemMeta();
         ItemMeta ediDisplayMeta = ediDisplay.getItemMeta();
@@ -126,19 +136,29 @@ public class OptionManager{
         headerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         headerMeta.setLore(Collections.singletonList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Shows " + optionName + " on the player-list-header"));
 
+        backMeta.setDisplayName( ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "Go back" + ChatColor.DARK_GRAY + "]");
+        backMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Go back to EDI-Settings"));
+
+        upDownPositionMeta.setDisplayName(ChatColor.AQUA + "Change position");
+        upDownPositionMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "RIGHT CLICK" + ChatColor.GOLD + "▲", ChatColor.DARK_GRAY + "LEFT CLICK" + ChatColor.GOLD + "▼"));
+
         header.setItemMeta(headerMeta);
         footer.setItemMeta(footerMeta);
         ediDisplay.setItemMeta(ediDisplayMeta);
         showKeys.setItemMeta(showKeysMeta);
+        back.setItemMeta(backMeta);
+        upDownPosition.setItemMeta(upDownPositionMeta);
 
-        inventory.setItem(1, showKeys);
+        inventory.setItem(2, showKeys);
         inventory.setItem(3, header);
         inventory.setItem(4, footer);
         inventory.setItem(5, ediDisplay);
+        inventory.setItem(8, back);
+        inventory.setItem(6, upDownPosition);
     }
 
     //This method is used to show the inv to the player and update it
-    public void show(){
+    public void showOptionInv(){
         refreshOptionInventory();
         ediManager.getPlayer().openInventory(optionInventory);
     }
@@ -178,11 +198,12 @@ public class OptionManager{
         }
     }
 
-    //This method is executed from the GlobalOptionController each time an item is clicked in this inv
+    //This method is executed from the GlobalOptionController if someone clicks in the options
     public void handleClick(int slot){
         final int ediScreen = 4;
         final int footer = 5;
         final int header = 3;
+        final int close = 49;
         HashMap<Integer, Option> optionsWithSlots = new HashMap<>();
         options.forEach((id, option) -> optionsWithSlots.put(option.getInvSlot(), option));
         if (optionsWithSlots.containsKey(slot)) {
@@ -190,23 +211,28 @@ public class OptionManager{
             ediManager.getPlayer().openInventory(deepOptionInv.getDeepOptionInv());
         }else if (Arrays.asList(ediScreen,footer,header).contains(slot)){
             updateOnTobToggle(slot);
+        }else if (slot == close){
+            ediManager.getPlayer().closeInventory();
         }
     }
 
     public void handelDeepOptionInvClick(int slot){
-        final int showKeysSlot = 1;
+        final int showKeysSlot = 2;
         final int headerSlot = 3;
         final int footerSlot = 4;
         final int edInfoDisplaySlot = 5;
-        if (Arrays.asList(showKeysSlot, headerSlot, footerSlot, edInfoDisplaySlot).contains(slot)){
+        final int goBackSlot = 8;
+        if (Arrays.asList(showKeysSlot, headerSlot, footerSlot, edInfoDisplaySlot, goBackSlot).contains(slot)){
             if (slot == showKeysSlot){
-                deepOptionInv.getOption().setEdiDisplay(updateButton(deepOptionInv.getOption().isShowKeys(), "Show keys", slot, deepOptionInv.getDeepOptionInv()));
+                deepOptionInv.getOption().setShowKeys(updateButton(deepOptionInv.getOption().isShowKeys(), "Show keys", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == edInfoDisplaySlot){
                 deepOptionInv.getOption().setEdiDisplay(updateButton(deepOptionInv.getOption().isEdiDisplay(), "EDInfo-Screen", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == headerSlot){
                 deepOptionInv.getOption().setHeader(updateButton(deepOptionInv.getOption().isHeader(), "EDInfo-Header", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == footerSlot){
                 deepOptionInv.getOption().setFooter(updateButton(deepOptionInv.getOption().isFooter(), "EDInfo-Footer", slot, deepOptionInv.getDeepOptionInv()));
+            }else if (slot == goBackSlot){
+                showOptionInv();
             }
         }
     }
@@ -229,16 +255,21 @@ public class OptionManager{
         return toCompare.equals(optionInventory);
     }
 
+    private int slot;
+
     public void registerOption(Option option){
-        int slot = 13;
         ArrayList<Integer> keys = new ArrayList<>();
         options.forEach((s, option1) -> keys.add(option1.getInvSlot()));
         if (options.size()==0){
             slot = 10;
-        }else if (Arrays.asList(37,39,41).contains(keys.get(keys.size()-1))){
-                slot = keys.get(keys.size()-1)-25;
-        }else if (keys.get(keys.size()-1)<43){
-            slot = keys.get(keys.size()-1) + 9;
+            System.out.println("Br 1: " + slot + " " + option.getName());
+        }else if (Arrays.asList(37,39,41).contains(slot)){
+                slot = slot-25;
+            System.out.println("Br 2: " + slot + " " + option.getName());
+        }else if (slot<43){
+            slot += 9;
+            System.out.println(keys);
+            System.out.println("Br 3: " + slot + " " + option.getName());
         }
         System.out.println(slot);
         if (slot > 0){

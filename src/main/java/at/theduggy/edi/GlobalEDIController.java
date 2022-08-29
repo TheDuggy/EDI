@@ -50,14 +50,6 @@ public class GlobalEDIController implements Listener {
     }
 
     @EventHandler
-    public void onInvClose(InventoryCloseEvent e){
-        EDIManager ediManager = Main.getEDIManager(e.getPlayer().getUniqueId());
-        if (ediManager.getOptionManager().compareDeepOptionIv(e.getInventory())){
-            ediManager.getOptionManager().setDeepOptionInv(null);
-        }
-    }
-
-    @EventHandler
     public void onQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();
         Main.getEDIData().get(player.getUniqueId()).getRenderManager().getScoreboardRenderer().unregister();

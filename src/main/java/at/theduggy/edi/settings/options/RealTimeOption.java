@@ -3,6 +3,7 @@ package at.theduggy.edi.settings.options;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -13,6 +14,6 @@ public class RealTimeOption extends Option{
 
     @Override
     public String getValue(Player player) {
-        return DateTimeFormatter.ofPattern("HH:mm").format(LocalDate.now(ZoneId.systemDefault()));
+        return LocalTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 }
