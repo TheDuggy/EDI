@@ -35,7 +35,13 @@ public class GlobalEDIController implements Listener {
             ediManager.getOptionManager().handleClick(e.getRawSlot());
         }else if (ediManager.getOptionManager().compareDeepOptionIv(e.getClickedInventory())){
             e.setCancelled(true);
-            ediManager.getOptionManager().handelDeepOptionInvClick(e.getRawSlot());
+            int button; //0=LEFT_CLICK 1=RIGHT_CLICK
+            if (e.isLeftClick()){
+                button = 0;
+            }else {
+                button = 1;
+            }
+            ediManager.getOptionManager().handelDeepOptionInvClick(e.getRawSlot(), button);
         }
     }
 

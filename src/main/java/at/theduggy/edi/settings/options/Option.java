@@ -10,6 +10,9 @@ public abstract class Option {
     private boolean ediDisplay;
     private final String optionName;
     private final String optionInfo;
+
+    private int displayIndex;
+
     private int invSlot;
 
 
@@ -72,6 +75,11 @@ public abstract class Option {
 
     public abstract String getValue(Player player);
 
+    public void setDisplayIndex(int displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 
-
+    public int getDisplayIndex() {
+        return displayIndex;
+    }
 }

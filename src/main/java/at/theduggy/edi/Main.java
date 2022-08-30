@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
             }
             ediManager.getRenderManager().getScoreboardRenderer().unregister();
             ediManager.getRenderManager().getFooterRenderer().reset();
+            ediManager.getRenderManager().getHeaderRenderer().reset();
         }
     }
 

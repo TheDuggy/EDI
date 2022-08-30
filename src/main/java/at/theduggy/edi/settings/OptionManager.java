@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Parrot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +27,7 @@ public class OptionManager{
     private boolean headerEnabled = false;
     private boolean footerEnabled = false;
 
+    private ArrayList<Option> displayIndexList = new ArrayList<>();
     private final TreeMap<String, Option> options = new TreeMap<>();
 
     private final EDIManager ediManager;
@@ -140,7 +142,7 @@ public class OptionManager{
         backMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Go back to EDI-Settings"));
 
         upDownPositionMeta.setDisplayName(ChatColor.AQUA + "Change position");
-        upDownPositionMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "RIGHT CLICK" + ChatColor.GOLD + "▲", ChatColor.DARK_GRAY + "LEFT CLICK" + ChatColor.GOLD + "▼"));
+        upDownPositionMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "RIGHT CLICK " + ChatColor.GOLD + "▲", ChatColor.DARK_GRAY + "LEFT CLICK  " + ChatColor.GOLD + "▼"));
 
         header.setItemMeta(headerMeta);
         footer.setItemMeta(footerMeta);
@@ -216,13 +218,15 @@ public class OptionManager{
         }
     }
 
-    public void handelDeepOptionInvClick(int slot){
+    public void handelDeepOptionInvClick(int slot, int BUTTON_TYPE){
         final int showKeysSlot = 2;
         final int headerSlot = 3;
         final int footerSlot = 4;
         final int edInfoDisplaySlot = 5;
         final int goBackSlot = 8;
-        if (Arrays.asList(showKeysSlot, headerSlot, footerSlot, edInfoDisplaySlot, goBackSlot).contains(slot)){
+        final int changePosition = 6;
+        Option option = deepOptionInv.getOption();
+        if (Arrays.asList(showKeysSlot, headerSlot, footerSlot, edInfoDisplaySlot, goBackSlot, changePosition).contains(slot)){
             if (slot == showKeysSlot){
                 deepOptionInv.getOption().setShowKeys(updateButton(deepOptionInv.getOption().isShowKeys(), "Show keys", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == edInfoDisplaySlot){
@@ -233,6 +237,42 @@ public class OptionManager{
                 deepOptionInv.getOption().setFooter(updateButton(deepOptionInv.getOption().isFooter(), "EDInfo-Footer", slot, deepOptionInv.getDeepOptionInv()));
             }else if (slot == goBackSlot){
                 showOptionInv();
+            }else if (slot == changePosition){
+                if (BUTTON_TYPE == 0){//Left-click
+                    if (option.getDisplayIndex()==1){
+
+                        option.setDisplayIndex(displayIndexList.size());
+                        ArrayList<Option> temp = new ArrayList<>();
+                        displayIndexList.remove(option);
+                        temp.addAll(displayIndexList);
+                        temp.add(option);
+                        displayIndexList = temp;
+                        for (int i = displayIndexList.size()-2;i>=0;i--){
+                            displayIndexList.get(i).setDisplayIndex(displayIndexList.get(i+1).getDisplayIndex()-1);
+                        }
+                        Collections.sort(displayIndexList, Comparator.comparing(Option::getDisplayIndex));
+                    }else {
+                        deepOptionInv.getOption().setDisplayIndex(deepOptionInv.getOption().getDisplayIndex() - 1);
+                        displayIndexList.get(displayIndexList.indexOf(option)-1).setDisplayIndex(displayIndexList.get(displayIndexList.indexOf(option)-1).getDisplayIndex()+1);
+                    }
+                    Collections.sort(displayIndexList, Comparator.comparing(Option::getDisplayIndex));
+                }else {//Right-click
+                    if (option.getDisplayIndex()==displayIndexList.size()){
+                        option.setDisplayIndex(1);
+                        ArrayList<Option> temp = new ArrayList<>();
+                        temp.add(option);
+                        displayIndexList.remove(option);
+                        temp.addAll(displayIndexList);
+                        displayIndexList = temp;
+                        for (int i = 1;i<displayIndexList.size();i++){
+                            displayIndexList.get(i).setDisplayIndex(displayIndexList.get(i-1).getDisplayIndex()+1);
+                        }
+                    }else {
+                        option.setDisplayIndex(deepOptionInv.getOption().getDisplayIndex() + 1);
+                        displayIndexList.get(displayIndexList.indexOf(option)+1).setDisplayIndex(displayIndexList.get(displayIndexList.indexOf(option)+1).getDisplayIndex()-1);
+                    }
+                    Collections.sort(displayIndexList, Comparator.comparing(Option::getDisplayIndex));
+                }
             }
         }
     }
@@ -251,6 +291,10 @@ public class OptionManager{
         return footerEnabled;
     }
 
+    public ArrayList<Option> getDisplayIndexList() {
+        return displayIndexList;
+    }
+
     public boolean compareInv(Inventory toCompare){
         return toCompare.equals(optionInventory);
     }
@@ -258,21 +302,22 @@ public class OptionManager{
     private int slot;
 
     public void registerOption(Option option){
-        ArrayList<Integer> keys = new ArrayList<>();
-        options.forEach((s, option1) -> keys.add(option1.getInvSlot()));
         if (options.size()==0){
             slot = 10;
-            System.out.println("Br 1: " + slot + " " + option.getName());
         }else if (Arrays.asList(37,39,41).contains(slot)){
-                slot = slot-25;
-            System.out.println("Br 2: " + slot + " " + option.getName());
+            slot = slot-25;
         }else if (slot<43){
             slot += 9;
-            System.out.println(keys);
-            System.out.println("Br 3: " + slot + " " + option.getName());
         }
         System.out.println(slot);
         if (slot > 0){
+            if (displayIndexList.size()==0){
+                option.setDisplayIndex(1);
+            }else {
+                option.setDisplayIndex(displayIndexList.get(displayIndexList.size()-1).getDisplayIndex()+1);
+            }
+            displayIndexList.add(option);
+            Collections.sort(displayIndexList, Comparator.comparing(Option::getDisplayIndex));
             option.setInvSlot(slot);
             options.put(new NamespacedKey(Main.getPlugin(Main.class), option.getName() + "_option").toString(), option);
         }else {

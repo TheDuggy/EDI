@@ -14,6 +14,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class ScoreboardRenderer {
 
@@ -34,16 +35,14 @@ public class ScoreboardRenderer {
     }
 
     public void render(){
-        currentScore = 0;
-        OptionManager optionManager = ediManager.getOptionManager();
         if (ediManager.getOptionManager().isDisplayEnabled()){
             if (hidden){
                 show(); //Shows the objective again if it was disabled!
             }
             if (organisedScores.size()==0){
                 System.out.println(ediManager.getOptionManager().getRegisteredOptions());
-                for (Option o : ediManager.getOptionManager().getRegisteredOptions().values()){
-                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getName() + ":" + " ":"") + o.getValue(ediManager.getPlayer()), currentScore++);
+                for (Option o : ediManager.getOptionManager().getDisplayIndexList()){
+                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getName() + ":" + " ":"") + o.getValue(ediManager.getPlayer()), o.getDisplayIndex());
                     organisedScores.add(organisedScore);
                     if (o.isEdiDisplay()){
                         organisedScore.render();
@@ -56,13 +55,13 @@ public class ScoreboardRenderer {
                 organisedScores.add(separator);
                 separator.setScore(tempOrganisedScores.size());
 
-                for (int i = 0,counter = tempOrganisedScores.size()-1;i<tempOrganisedScores.size();i++,counter--){
-                    tempOrganisedScores.get(i).setScore(counter);
+                for (OrganisedScore score : tempOrganisedScores){
+                    score.setScore(score.getDisplayIndex());
                 }
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }else {
                 tempOrganisedScores.clear();
-
+                Collections.sort(organisedScores, Comparator.comparing(OrganisedScore::getDisplayIndex));
                 for (OrganisedScore organisedScore : organisedScores){
                     if (organisedScore.getOption()!=null){
                         if (organisedScore.getOption().isEdiDisplay()){
@@ -77,9 +76,9 @@ public class ScoreboardRenderer {
                 }
 
                 organisedScores.get(organisedScores.size()-1).update(calculateSeparator());
-                organisedScores.get(organisedScores.size()-1).setScore(tempOrganisedScores.size());
-                for (int i = 0,counter = tempOrganisedScores.size()-1;i<tempOrganisedScores.size();i++,counter--){
-                    tempOrganisedScores.get(i).setScore(counter);
+                organisedScores.get(organisedScores.size()-1).setScore(tempOrganisedScores.size()+1);
+                for (OrganisedScore score : tempOrganisedScores){
+                    score.setScore(score.getDisplayIndex());
                 }
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }
@@ -103,8 +102,6 @@ public class ScoreboardRenderer {
         hidden = false;
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
-
-    private int currentScore = 0;
 
     private String calculateSeparator(){
         ArrayList<Integer> lengths = new ArrayList<>();

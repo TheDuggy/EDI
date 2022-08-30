@@ -9,20 +9,20 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class OrganisedScore {
 
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
     private String value;
-    private final int index;
     private boolean rendered;
     private final Objective objective;
     private int msgLength = 0;
+    private final OptionManager optionManager;
     private Score tmpScore;
     private final Option option;
 
     public OrganisedScore(EDIManager ediManager, Option option, String value, int index) {
+        optionManager = ediManager.getOptionManager();
+        this.option = option;
         this.scoreboard = ediManager.getRenderManager().getScoreboardRenderer().getScoreboard();
         this.value = value;
-        this.index = index;
-        this.option = option;
         char[] chars = value.toCharArray();
         for (char c : chars){
             msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
@@ -33,7 +33,7 @@ public class OrganisedScore {
     public void render(){
         rendered = true;
         tmpScore = objective.getScore(value);
-        tmpScore.setScore(index);
+        tmpScore.setScore(getDisplayIndex());
     }
 
     public void update(String value){
@@ -46,7 +46,7 @@ public class OrganisedScore {
             msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
         }
         tmpScore = objective.getScore(value);
-        tmpScore.setScore(index);
+        tmpScore.setScore(getDisplayIndex());
 
     }
 
@@ -73,4 +73,13 @@ public class OrganisedScore {
     public Option getOption() {
         return option;
     }
+
+    public int getDisplayIndex(){
+        if (option!=null) {
+            return this.option.getDisplayIndex();
+        }else {
+            return optionManager.getDisplayIndexList().size()+1;
+        }
+    }
+
 }

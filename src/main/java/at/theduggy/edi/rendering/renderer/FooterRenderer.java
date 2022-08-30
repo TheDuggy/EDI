@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 public class FooterRenderer{
     private final EDIManager ediManager;
     private boolean footerRendered = false;
-    private String oldFooter = null;
 
     public FooterRenderer(EDIManager ediManager) {
         this.ediManager = ediManager;
@@ -18,31 +17,31 @@ public class FooterRenderer{
     public void render(){
         OptionManager optionManager = ediManager.getOptionManager();
         if (optionManager.isFooterEnabled()){
-            if (!footerRendered){
-                oldFooter = ediManager.getPlayer().getPlayerListFooter();
-            }
             footerRendered = true;
             StringBuilder footer = new StringBuilder();
 
+            boolean logoAppended = false;
             if (!ediManager.getOptionManager().isHeaderEnabled()){
                 footer.append(Main.logo + ChatColor.RESET);
+                logoAppended = true;
             }
-            for (Option o : optionManager.getRegisteredOptions().values()){
+            for (int i = ediManager.getOptionManager().getDisplayIndexList().size()-1;i>=0;i--){
+                Option o = ediManager.getOptionManager().getDisplayIndexList().get(i);
                 if (o.isFooter()){
-                    footer.append((o.isShowKeys()?"\n" + o.getName() + ": " : "\n") + o.getValue(ediManager.getPlayer()) + "\n");
+                    footer.append((o.isShowKeys()?"\n" + o.getName() + ": " : (logoAppended?"\n":"")) + o.getValue(ediManager.getPlayer()));
                 }
             }
             ediManager.getPlayer().setPlayerListFooter(footer.toString());
         }else {
             if (footerRendered){
                 footerRendered = false;
-                ediManager.getPlayer().setPlayerListFooter(oldFooter);
+                ediManager.getPlayer().setPlayerListFooter(null);
             }
         }
     }
 
     public void reset(){
-        ediManager.getPlayer().setPlayerListFooter(oldFooter);
+        ediManager.getPlayer().setPlayerListFooter(null);
     }
 
 }
