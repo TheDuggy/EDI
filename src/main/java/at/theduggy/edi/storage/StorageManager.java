@@ -2,6 +2,7 @@ package at.theduggy.edi.storage;
 
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.Main;
+import at.theduggy.edi.rendering.OrganisedScore;
 import at.theduggy.edi.settings.options.Option;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -17,6 +18,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -48,6 +51,7 @@ public class StorageManager implements Listener {
                     OptionStorageData optd = dataOfPlayers.get(player).getOptionsData().get(option_identifier);
                     optd.applyDataToStorage(option);
                 }
+                Collections.sort(ediManager.getOptionManager().getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
                 Main.getEdiPlayerData().put(UUID.fromString(player), ediManager);
             }
             bufferedReader.close();

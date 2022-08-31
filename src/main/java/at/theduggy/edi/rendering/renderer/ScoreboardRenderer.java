@@ -61,7 +61,6 @@ public class ScoreboardRenderer {
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }else {
                 tempOrganisedScores.clear();
-                Collections.sort(organisedScores, Comparator.comparing(OrganisedScore::getDisplayIndex));
                 for (OrganisedScore organisedScore : organisedScores){
                     if (organisedScore.getOption()!=null){
                         if (organisedScore.getOption().isEdiDisplay()){

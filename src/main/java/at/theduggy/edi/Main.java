@@ -43,7 +43,7 @@ public class Main extends JavaPlugin {
 
         for (EDIManager ediManager:ediPlayerData.values()){
             Inventory currentInv = ediManager.getPlayer().getOpenInventory().getTopInventory();
-            if (ediManager.getOptionManager().compareInv(currentInv)||ediManager.getOptionManager().compareDeepOptionIv(currentInv)){
+            if (ediManager.getOptionManager().compareSettingsInv(currentInv)||ediManager.getOptionManager().compareDeepOptionIv(currentInv)){
                 ediManager.getPlayer().closeInventory();
             }
             ediManager.getRenderManager().getScoreboardRenderer().unregister();

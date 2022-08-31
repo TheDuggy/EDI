@@ -6,6 +6,9 @@ import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.Option;
 import org.bukkit.ChatColor;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 public class FooterRenderer{
     private final EDIManager ediManager;
     private boolean footerRendered = false;

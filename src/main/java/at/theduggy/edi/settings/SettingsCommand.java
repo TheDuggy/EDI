@@ -13,7 +13,7 @@ public class SettingsCommand implements CommandExecutor {
         if (commandSender instanceof Player){
             Player player = (Player) commandSender;
             if (strings.length==0){
-               Main.getEdiPlayerData().get(player.getUniqueId()).getOptionManager().showOptionInv();
+               Main.getEdiPlayerData().get(player.getUniqueId()).getOptionManager().showSettingsInv();
             }else {
                 player.sendMessage(Main.getPrefix() + ChatColor.RED + "No arguments are allowed!");
             }
