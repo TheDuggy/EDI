@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class EDIManager {
 
     private final OptionManager optionManager;
-    private final Player player;
+    private Player player;
     private final RenderManager renderManager;
 
 
@@ -27,5 +27,9 @@ public class EDIManager {
 
     public RenderManager getRenderManager() {
         return renderManager;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

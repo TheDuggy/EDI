@@ -1,5 +1,6 @@
 package at.theduggy.edi;
 
+import at.theduggy.edi.storage.StorageManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,8 +20,10 @@ public class GlobalEDIController implements Listener {
 
             @Override
             public void run() {
-                for (EDIManager ediManager : Main.getEDIData().values()){
-                    ediManager.getRenderManager().update();
+                for (EDIManager ediManager : Main.getEdiPlayerData().values()){
+                    if (ediManager.getPlayer()!=null){
+                        ediManager.getRenderManager().update();
+                    }
                 }
             }
         }.runTaskTimer(Main.getPlugin(Main.class), 0,1);
@@ -29,7 +32,7 @@ public class GlobalEDIController implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e){
         Player player = (Player) e.getWhoClicked();
-        EDIManager ediManager = Main.getEDIManager(player.getUniqueId());
+        EDIManager ediManager = Main.getEdiPlayerData().get(player.getUniqueId());
         if (ediManager.getOptionManager().compareInv(e.getInventory())){
             e.setCancelled(true);
             ediManager.getOptionManager().handleClick(e.getRawSlot());
@@ -44,22 +47,12 @@ public class GlobalEDIController implements Listener {
             ediManager.getOptionManager().handelDeepOptionInvClick(e.getRawSlot(), button);
         }
     }
-
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-        Player player = e.getPlayer();
-        if (!Main.getEDIData().containsKey(player.getUniqueId())){
-
-            Main.getEDIData().put(player.getUniqueId(), new EDIManager(player));
-        }
-    }
-
     @EventHandler
     public void onQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();
-        Main.getEDIData().get(player.getUniqueId()).getRenderManager().getScoreboardRenderer().unregister();
-        Main.getEDIData().remove(player.getUniqueId());
+        Main.getEdiPlayerData().get(player.getUniqueId()).getRenderManager().getScoreboardRenderer().unregister();
+        Main.getEdiPlayerData().remove(player.getUniqueId());
+        Main.getEdiPlayerData().get(player.getUniqueId()).setPlayer(null);
     }
 
 }

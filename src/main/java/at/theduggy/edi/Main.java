@@ -8,17 +8,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
     public static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
     public static String logo = ChatColor.DARK_GRAY + "└" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDInfo" + ChatColor.DARK_GRAY + "┘";
+    private static StorageManager storageManager;
+    private static HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
 
     @Override
     public void onEnable() {
+        this.saveConfig();
+        try {
+            storageManager = new StorageManager();
+            Bukkit.getPluginManager().registerEvents(storageManager, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (Player player:Bukkit.getOnlinePlayers()){
-            StorageManager.getEDIData().put(player.getUniqueId(), new EDIManager(player));
+            if (!ediPlayerData.containsKey(player.getUniqueId())){
+                storageManager.registerUser(player);
+            }else {
+                ediPlayerData.get(player.getUniqueId()).setPlayer(player);
+            }
         }
         Bukkit.getPluginManager().registerEvents(new GlobalEDIController(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
@@ -26,7 +40,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (EDIManager ediManager:StorageManager.getEDIData().values()){
+
+        for (EDIManager ediManager:ediPlayerData.values()){
             Inventory currentInv = ediManager.getPlayer().getOpenInventory().getTopInventory();
             if (ediManager.getOptionManager().compareInv(currentInv)||ediManager.getOptionManager().compareDeepOptionIv(currentInv)){
                 ediManager.getPlayer().closeInventory();
@@ -35,13 +50,22 @@ public class Main extends JavaPlugin {
             ediManager.getRenderManager().getFooterRenderer().reset();
             ediManager.getRenderManager().getHeaderRenderer().reset();
         }
-    }
-
-    public static EDIManager getEDIManager(UUID player) {
-        return StorageManager.getEDIData().get(player);
+        try {
+            storageManager.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getPrefix() {
         return prefix;
+    }
+
+    public static StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    public static HashMap<UUID, EDIManager> getEdiPlayerData() {
+        return ediPlayerData;
     }
 }
