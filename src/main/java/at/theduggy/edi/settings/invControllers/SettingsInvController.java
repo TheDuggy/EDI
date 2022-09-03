@@ -25,10 +25,12 @@ public class SettingsInvController extends InvController{
 
     public SettingsInvController(OptionManager optionManager){
         this.optionManager = optionManager;
-        registerOption(new CordsOption("Cords", "Shows your current cords",false, false, true, true));
-        registerOption(new BiomeOption("Biome","Shows your current biome", false, false, true, true));
-        registerOption(new RealTimeOption("Real-time", "Shows you the current real-time", false, false, true, true));
-        registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time", false, false, true, true));
+        registerOption(new CordsOption("Cords", "Shows your current cords"));
+        registerOption(new BiomeOption("Biome","Shows your current biome"));
+        registerOption(new RealTimeOption("Real-time", "Shows you the current real-time"));
+        registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time"));
+        registerOption(new DateOption("Date", "Shows you the current date"));
+        registerOption(new ToolDurabilityOption("Item-Durabillity", "Shows you the durabillity of the item in your hand"));
     }
 
     private int slot;

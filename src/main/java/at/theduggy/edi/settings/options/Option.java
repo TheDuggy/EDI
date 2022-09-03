@@ -21,16 +21,16 @@ public abstract class Option {
     private int invSlot;
 
 
-    public Option(String optionName, String optionInfo, boolean header, boolean footer, boolean edi_display, boolean showKeys) {
+    public Option(String optionName, String optionInfo) {
         this.keyFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.separatorFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.valueFontData = new FontData(ChatColor.GOLD, false, false, false);
         this.optionInfo = optionInfo;
         this.optionName = optionName;
-        this.header = header;
-        this.footer = footer;
-        this.ediDisplay = edi_display;
-        this.showKeys = showKeys;
+        this.header = false;
+        this.footer = false;
+        this.ediDisplay = true;
+        this.showKeys = true;
     }
 
     public boolean isHeader() {

@@ -8,8 +8,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class RealTimeOption extends Option{
-    public RealTimeOption(String optionName, String optionInfo, boolean header, boolean footer, boolean edi_display, boolean showKeys) {
-        super(optionName, optionInfo, header, footer, edi_display, showKeys);
+    public RealTimeOption(String optionName, String optionInfo) {
+        super(optionName, optionInfo);
     }
 
     @Override
