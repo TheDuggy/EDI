@@ -8,8 +8,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class IngameTimeOption extends Option{
-    public IngameTimeOption(String optionName, String optionInfo) {
-        super(optionName, optionInfo);
+    public IngameTimeOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier);
     }
 
     @Override

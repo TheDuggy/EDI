@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 
 public class BiomeOption extends Option{
 
-    public BiomeOption(String optionName, String optionInfo) {
-        super(optionName, optionInfo);
+    public BiomeOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier);
     }
 
     @Override

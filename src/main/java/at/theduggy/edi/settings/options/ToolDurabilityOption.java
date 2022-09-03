@@ -7,15 +7,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ToolDurabilityOption extends Option{
-    public ToolDurabilityOption(String optionName, String optionInfo) {
-        super(optionName, optionInfo);
+    public ToolDurabilityOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier);
     }
 
     @Override
     public String getValue(Player player) {
         String result = "---";
         ItemStack tool = player.getInventory().getItemInMainHand();
-        if (tool.getItemMeta() instanceof Damageable){
+        if (tool.getItemMeta() instanceof Damageable&&tool.getType().getMaxDurability()>0){
             ItemMeta toolMeta = tool.getItemMeta();
             int durability = tool.getType().getMaxDurability()-((Damageable) toolMeta).getDamage();
             double percent = 100-(((org.bukkit.inventory.meta.Damageable) toolMeta).getDamage()*100.0)/tool.getType().getMaxDurability();

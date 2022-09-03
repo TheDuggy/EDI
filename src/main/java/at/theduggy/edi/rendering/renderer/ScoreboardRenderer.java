@@ -1,10 +1,7 @@
 package at.theduggy.edi.rendering.renderer;
 
 import at.theduggy.edi.EDIManager;
-import at.theduggy.edi.GlobalEDIController;
-import at.theduggy.edi.rendering.DefaultFontInfo;
 import at.theduggy.edi.rendering.OrganisedScore;
-import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.Option;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +11,6 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class ScoreboardRenderer {
 
@@ -42,7 +38,7 @@ public class ScoreboardRenderer {
             if (organisedScores.size()==0){
                 System.out.println(ediManager.getOptionManager().getRegisteredOptions());
                 for (Option o : ediManager.getOptionManager().getDisplayIndexList()){
-                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getKeyFontData().format(o.getName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())), o.getDisplayIndex());
+                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getKeyFontData().format(o.getDisplayName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())), o.getDisplayIndex());
                     organisedScores.add(organisedScore);
                     if (o.isEdiDisplay()){
                         organisedScore.render();
@@ -72,7 +68,7 @@ public class ScoreboardRenderer {
                     if (organisedScore.getOption().isEdiDisplay()){
                         Option o = organisedScore.getOption();
 
-                        organisedScore.update((o.isShowKeys()?o.getKeyFontData().format(o.getName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
+                        organisedScore.update((o.isShowKeys()?o.getKeyFontData().format(o.getDisplayName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
                         tempOrganisedScores.add(organisedScore);
                     }else {
                         if (organisedScore.isRendered()){

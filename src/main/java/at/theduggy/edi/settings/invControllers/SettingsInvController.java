@@ -25,12 +25,12 @@ public class SettingsInvController extends InvController{
 
     public SettingsInvController(OptionManager optionManager){
         this.optionManager = optionManager;
-        registerOption(new CordsOption("Cords", "Shows your current cords"));
-        registerOption(new BiomeOption("Biome","Shows your current biome"));
-        registerOption(new RealTimeOption("Real-time", "Shows you the current real-time"));
-        registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time"));
-        registerOption(new DateOption("Date", "Shows you the current date"));
-        registerOption(new ToolDurabilityOption("Item-Durabillity", "Shows you the durabillity of the item in your hand"));
+        registerOption(new CordsOption("Cords", "Shows your current cords", "cords"));
+        registerOption(new BiomeOption("Biome","Shows your current biome", "biome"));
+        registerOption(new RealTimeOption("Real-time", "Shows you the current real-time", "real_world_time"));
+        registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time", "ingame_world_time"));
+        registerOption(new DateOption("Date", "Shows you the current date", "current_date"));
+        registerOption(new ToolDurabilityOption("Item-Durability", "Shows you the durability of the item in your hand", "current_item_durability"));
     }
 
     private int slot;
@@ -51,9 +51,7 @@ public class SettingsInvController extends InvController{
             optionManager.getDisplayIndexList().add(option);
             Collections.sort(optionManager.getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
             option.setInvSlot(slot);
-            optionManager.getRegisteredOptions().put(new NamespacedKey(Main.getPlugin(Main.class), option.getName() + "_option").toString(), option);
-        }else {
-            throw new IllegalArgumentException("Options are full!"); //TODO Remove !!!
+            optionManager.getRegisteredOptions().put("included:" + option.getIdentifier() + "_option", option);
         }
 
     }
@@ -106,7 +104,7 @@ public class SettingsInvController extends InvController{
             ItemStack sign = new ItemStack(Material.SIGN);
             ItemMeta itemMeta = sign.getItemMeta();
             itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC +option.getInfo()));
-            itemMeta.setDisplayName(ChatColor.GOLD + option.getName());
+            itemMeta.setDisplayName(ChatColor.GOLD + option.getDisplayName());
             if (option.isFooter()||option.isHeader()||option.isEdiDisplay()){
                 itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);

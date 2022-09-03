@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 public class CordsOption extends Option{
 
-    public CordsOption(String optionName, String optionInfo) {
-        super(optionName, optionInfo);
+    public CordsOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier);
     }
 
     @Override

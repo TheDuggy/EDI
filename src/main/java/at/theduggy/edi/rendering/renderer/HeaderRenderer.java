@@ -24,7 +24,7 @@ public class HeaderRenderer{
             for (int i = ediManager.getOptionManager().getDisplayIndexList().size()-1;i>=0;i--){
                 Option o = ediManager.getOptionManager().getDisplayIndexList().get(i);
                 if (o.isHeader()){
-                    header.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getName()  )+ o.getSeparatorFontData().format(": ") : "\n") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
+                    header.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getDisplayName()  )+ o.getSeparatorFontData().format(": ") : "\n") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
                 }
             }
             ediManager.getPlayer().setPlayerListHeader(header.toString());

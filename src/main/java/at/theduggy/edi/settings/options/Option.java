@@ -13,20 +13,22 @@ public abstract class Option {
     private boolean header;
     private boolean footer;
     private boolean ediDisplay;
-    private final String optionName;
+    private final String optionIdentifier;
     private final String optionInfo;
+    private final String optionDisplayName;
 
     private int displayIndex;
 
     private int invSlot;
 
 
-    public Option(String optionName, String optionInfo) {
+    public Option(String optionDisplayName , String optionInfo ,String optionIdentifier) {
         this.keyFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.separatorFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.valueFontData = new FontData(ChatColor.GOLD, false, false, false);
         this.optionInfo = optionInfo;
-        this.optionName = optionName;
+        this.optionIdentifier = optionIdentifier;
+        this.optionDisplayName = optionDisplayName;
         this.header = false;
         this.footer = false;
         this.ediDisplay = true;
@@ -65,8 +67,12 @@ public abstract class Option {
         this.showKeys = showKeys;
     }
 
-    public String getName() {
-        return optionName;
+    public String getIdentifier() {
+        return optionIdentifier;
+    }
+
+    public String getDisplayName() {
+        return optionDisplayName;
     }
 
     public int getInvSlot() {
@@ -114,4 +120,5 @@ public abstract class Option {
     public void setValueFontData(FontData valueFontData) {
         this.valueFontData = valueFontData;
     }
+
 }

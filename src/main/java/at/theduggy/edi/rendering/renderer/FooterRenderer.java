@@ -6,9 +6,6 @@ import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.Option;
 import org.bukkit.ChatColor;
 
-import java.util.Collections;
-import java.util.Comparator;
-
 public class FooterRenderer{
     private final EDIManager ediManager;
     private boolean footerRendered = false;
@@ -31,7 +28,7 @@ public class FooterRenderer{
             for (int i = ediManager.getOptionManager().getDisplayIndexList().size()-1;i>=0;i--){
                 Option o = ediManager.getOptionManager().getDisplayIndexList().get(i);
                 if (o.isFooter()){
-                    footer.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getName()) + o.getKeyFontData().format(": ") : (logoAppended?"\n":"")) + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
+                    footer.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getDisplayName()) + o.getKeyFontData().format(": ") : (logoAppended?"\n":"")) + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
                 }
             }
             ediManager.getPlayer().setPlayerListFooter(footer.toString());

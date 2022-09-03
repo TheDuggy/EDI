@@ -1,7 +1,6 @@
 package at.theduggy.edi.settings.invControllers;
 
 import at.theduggy.edi.settings.OptionManager;
-import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontSettingsInvController;
 import at.theduggy.edi.settings.options.Option;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +31,7 @@ public class OptionSettingsInvController extends InvController{
 
     public void refresh(Option o){
         this.option = o;
-        String optionName = o.getName();
+        String optionName = o.getDisplayName();
         optionSettingsInv = Bukkit.createInventory(null,18, "[EDI] " + optionName);
         ItemStack header = new ItemStack(Material.LEATHER_HELMET);
         ItemStack footer = new ItemStack(Material.LEATHER_BOOTS);
@@ -160,7 +159,6 @@ public class OptionSettingsInvController extends InvController{
                     for (int i = optionManager.getDisplayIndexList().size()-2;i>=0;i--){
                         optionManager.getDisplayIndexList().get(i).setDisplayIndex(optionManager.getDisplayIndexList().get(i+1).getDisplayIndex()-1);
                     }
-                    optionManager.getDisplayIndexList().forEach(option1 -> optionManager.getPlayer().sendMessage(option1.getName()));
                     Collections.sort(optionManager.getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
                 }else {
                     option.setDisplayIndex(option.getDisplayIndex() - 1);

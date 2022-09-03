@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class DateOption extends Option{
-    public DateOption(String optionName, String optionInfo) {
-        super(optionName, optionInfo);
+    public DateOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier);
     }
 
     @Override
