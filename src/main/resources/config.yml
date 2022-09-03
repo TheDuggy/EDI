@@ -4,3 +4,6 @@
 #Defines how often the values of an option are updated (in ticks; 1 sec = 20 tics)
 #Default = 2
 update_cycle_count: 2
+
+#All options which are added will be not usable by players. Just add them by their identifier
+blacklisted_options:

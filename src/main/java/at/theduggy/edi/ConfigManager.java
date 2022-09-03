@@ -15,4 +15,8 @@ public class ConfigManager {
     public Long getUpdateCycleCount(){
         return config.getLong("update_cycle_count");
     }
+
+    public ArrayList<String> getBlackListedOptions(){
+        return new ArrayList<>(config.getStringList("blacklisted_options"));
+    }
 }
