@@ -20,9 +20,12 @@ public class Main extends JavaPlugin {
     private static StorageManager storageManager;
     private static HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
 
+    public ConfigManager configManager;
+
     @Override
     public void onEnable() {
         this.saveConfig();
+        this.configManager = new ConfigManager(this.getConfig());
         try {
             storageManager = new StorageManager();
             Bukkit.getPluginManager().registerEvents(storageManager, this);
@@ -77,5 +80,9 @@ public class Main extends JavaPlugin {
 
     public static HashMap<UUID, EDIManager> getEdiPlayerData() {
         return ediPlayerData;
+    }
+
+    public static ConfigManager getConfigManager() {
+        return configManager;
     }
 }

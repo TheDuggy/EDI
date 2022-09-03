@@ -1,4 +1,4 @@
-package at.theduggy.edi.storage;
+package at.theduggy.edi.storage.dataObj;
 
 import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontData;
 import at.theduggy.edi.settings.options.Option;

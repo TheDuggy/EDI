@@ -22,7 +22,7 @@ public class GlobalEDIController implements Listener {
                     }
                 }
             }
-        }.runTaskTimer(Main.getPlugin(Main.class), 0,1);
+        }.runTaskTimer(Main.getPlugin(Main.class), 0,Main.getConfigManager().getUpdateCycleCount());
     }
 
     @EventHandler

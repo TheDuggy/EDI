@@ -1,4 +1,4 @@
-package at.theduggy.edi.storage;
+package at.theduggy.edi.storage.dataObj;
 
 import at.theduggy.edi.settings.OptionManager;
 

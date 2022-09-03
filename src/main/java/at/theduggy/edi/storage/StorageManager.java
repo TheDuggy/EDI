@@ -2,15 +2,13 @@ package at.theduggy.edi.storage;
 
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.Main;
-import at.theduggy.edi.rendering.OrganisedScore;
 import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontData;
 import at.theduggy.edi.settings.options.Option;
+import at.theduggy.edi.storage.dataObj.OptionStorageData;
+import at.theduggy.edi.storage.dataObj.SettingsStorageData;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.LinkedTreeMap;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
