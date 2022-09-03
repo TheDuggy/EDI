@@ -32,7 +32,7 @@ copyrightNotice = "/*\n" \
                   "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n" \
                   "*/\n"
 filecounter = 0
-for path, subdirs, files in os.walk("D:/jaspace/Plugins/InteliJ workspace/EDI/save/test/src/main"):
+for path, subdirs, files in os.walk("./src/"):
     for name in files:
         file = os.path.join(path, name)
         lines = []
