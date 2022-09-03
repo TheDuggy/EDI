@@ -18,10 +18,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class SettingsInvController {
+public class SettingsInvController extends InvController{
 
     private Inventory settingsInv;
-    private OptionManager optionManager;
+    private final OptionManager optionManager;
 
     public SettingsInvController(OptionManager optionManager){
         this.optionManager = optionManager;
@@ -40,7 +40,6 @@ public class SettingsInvController {
         }else if (slot<43){
             slot += 9;
         }
-        System.out.println(slot);
         if (slot > 0){
             if (optionManager.getDisplayIndexList().size()==0){
                 option.setDisplayIndex(1);
@@ -57,7 +56,8 @@ public class SettingsInvController {
 
     }
 
-    public void handleClick(int slot){
+    @Override
+    public void handleClick(int slot, int BUTTON_TYPE){
         final int ediScreen = 4;
         final int footer = 5;
         final int header = 3;
@@ -66,42 +66,23 @@ public class SettingsInvController {
         optionManager.getRegisteredOptions().forEach((id, option) -> optionsWithSlots.put(option.getInvSlot(), option));
         if (optionsWithSlots.containsKey(slot)) {
             optionManager.getOptionSettingsInvController().refresh(optionsWithSlots.get(slot));
-            optionManager.getEdiManager().getPlayer().openInventory(optionManager.getOptionSettingsInvController().getOptionSettingsInv());
-        }else if (Arrays.asList(ediScreen,footer,header).contains(slot)){
+            optionManager.getPlayer().openInventory(optionManager.getOptionSettingsInvController().getInventory());
+        }else {
             switch (slot){
                 case 3:
-                    optionManager.setHeaderEnabled(updateButton(optionManager.isHeaderEnabled(), "EDInfo-Header", slot));
+                    optionManager.setHeaderEnabled(updateButton(optionManager.isHeaderEnabled(), "EDInfo-Header", slot, settingsInv));
                     break;
 
                 case 4:
-                    optionManager.setDisplayEnabled(updateButton(optionManager.isDisplayEnabled(), "EDInfo-Screen", slot));
+                    optionManager.setDisplayEnabled(updateButton(optionManager.isDisplayEnabled(), "EDInfo-Screen", slot, settingsInv));
                     break;
 
                 case 5:
-                    optionManager.setFooterEnabled(updateButton(optionManager.isFooterEnabled(), "EDInfo-Footer", slot));
+                    optionManager.setFooterEnabled(updateButton(optionManager.isFooterEnabled(), "EDInfo-Footer", slot, settingsInv));
                     break;
+                default:
+                    optionManager.getPlayer().closeInventory();
             }
-        }else if (slot == close){
-            optionManager.getEdiManager().getPlayer().closeInventory();
-        }
-    }
-
-    public boolean updateButton(boolean enabled, String displayName, int slot){
-        ItemStack itemStack = settingsInv.getItem(slot);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (enabled){
-            if (itemMeta.hasEnchant(Enchantment.KNOCKBACK)){
-                itemMeta.removeEnchant(Enchantment.KNOCKBACK);
-            }
-            itemMeta.setDisplayName(ChatColor.RED + displayName);
-            itemStack.setItemMeta(itemMeta);
-            return false;
-        }else {
-            itemMeta.setDisplayName(ChatColor.GREEN + displayName);
-            itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            itemStack.setItemMeta(itemMeta);
-            return true;
         }
     }
 
@@ -148,7 +129,7 @@ public class SettingsInvController {
         settingsInv.setItem(slot, itemStack);
     }
 
-    public Inventory getSettingsInv() {
+    public Inventory getInventory() {
         return settingsInv;
     }
 }

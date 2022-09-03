@@ -3,12 +3,14 @@ package at.theduggy.edi.storage;
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.Main;
 import at.theduggy.edi.rendering.OrganisedScore;
+import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontData;
 import at.theduggy.edi.settings.options.Option;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,10 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class StorageManager implements Listener {
 
@@ -30,7 +29,10 @@ public class StorageManager implements Listener {
     private Gson gson;
     private Gson getGson(){
         if (gson == null){
-            return new GsonBuilder().setPrettyPrinting().create();
+            GsonBuilder builder = new  GsonBuilder().setPrettyPrinting();
+            builder.registerTypeAdapter(FontData.class, new FontDataTypeAdapter());
+            gson = builder.create();
+            return gson;
         }else {
             return gson;
         }
@@ -48,8 +50,8 @@ public class StorageManager implements Listener {
                 ediManager.getOptionManager().setHeaderEnabled(storageData.isHeader());
                 for (String option_identifier : ediManager.getOptionManager().getRegisteredOptions().keySet()){
                     Option option = ediManager.getOptionManager().getRegisteredOptions().get(option_identifier);
-                    OptionStorageData optd = dataOfPlayers.get(player).getOptionsData().get(option_identifier);
-                    optd.applyDataToStorage(option);
+                    OptionStorageData optionStorageData = dataOfPlayers.get(player).getOptionsData().get(option_identifier);
+                    optionStorageData.applyDataToStorage(option);
                 }
                 Collections.sort(ediManager.getOptionManager().getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
                 Main.getEdiPlayerData().put(UUID.fromString(player), ediManager);
@@ -88,11 +90,8 @@ public class StorageManager implements Listener {
         BufferedWriter bw = new BufferedWriter(new FileWriter(DATA_FILE, StandardCharsets.UTF_8));
         HashMap<String, SettingsStorageData> storageData = new HashMap<>();
         for (UUID k : Main.getEdiPlayerData().keySet()){
-            HashMap<String, OptionStorageData> options = new HashMap<>();
-            for (String s : Main.getEdiPlayerData().get(k).getOptionManager().getRegisteredOptions().keySet()){
-                options.put(s, new OptionStorageData(Main.getEdiPlayerData().get(k).getOptionManager().getRegisteredOptions().get(s)));
-            }
-            storageData.put(k.toString(), new SettingsStorageData(Main.getEdiPlayerData().get(k).getOptionManager()));
+            SettingsStorageData settingsStorageData = new SettingsStorageData(Main.getEdiPlayerData().get(k).getOptionManager());
+            storageData.put(k.toString(), settingsStorageData);
         }
         bw.write(getGson().toJson(storageData));
         bw.close();

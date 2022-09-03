@@ -42,8 +42,23 @@ public class OrganisedScore {
         this.value = value;
         char[] chars = value.toCharArray();
         msgLength = 0;
-        for (char c : chars){
-            msgLength +=DefaultFontInfo.getDefaultFontInfo(c).getLength();
+        boolean previousCode = false;
+        boolean bold = false;
+        for (char aChar : chars) {
+            if (aChar != '§') {
+                if (previousCode&&aChar == 'l') {
+                    bold = true;
+                } else {
+                    if (bold) {
+                        msgLength += DefaultFontInfo.getDefaultFontInfo(aChar).getBoldLength();
+                    } else {
+                        msgLength += DefaultFontInfo.getDefaultFontInfo(aChar).getLength();
+                    }
+                }
+            } else {
+                bold = false;
+                previousCode = true;
+            }
         }
         tmpScore = objective.getScore(value);
         tmpScore.setScore(getDisplayIndex());

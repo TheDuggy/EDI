@@ -3,7 +3,9 @@ package at.theduggy.edi.settings;
 import at.theduggy.edi.EDIManager;
 import at.theduggy.edi.settings.invControllers.OptionSettingsInvController;
 import at.theduggy.edi.settings.invControllers.SettingsInvController;
+import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontSettingsInvController;
 import at.theduggy.edi.settings.options.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.*;
@@ -13,7 +15,9 @@ public class OptionManager{
     private ArrayList<Option> displayIndexList = new ArrayList<>();
     private final OptionSettingsInvController optionSettingsInvController;
     private final SettingsInvController settingsInvController;
-
+    private final FontSettingsInvController keyFontSettingsInvController;
+    private final FontSettingsInvController separatorFontSettingsInvController;
+    private final FontSettingsInvController valueFontSettingsInvController;
     //basic on-tob options
     private boolean displayEnabled = true;
     private boolean headerEnabled = false;
@@ -26,12 +30,15 @@ public class OptionManager{
         this.ediManager = ediManager;
         optionSettingsInvController = new OptionSettingsInvController(this);
         settingsInvController = new SettingsInvController(this);
+        keyFontSettingsInvController = new FontSettingsInvController(this, "key");
+        separatorFontSettingsInvController = new FontSettingsInvController(this, "separator");
+        valueFontSettingsInvController = new FontSettingsInvController(this, "value");
     }
 
     //This method is used to show the inv to the player and update it
     public void showSettingsInv(){
         settingsInvController.refresh();
-        ediManager.getPlayer().openInventory(settingsInvController.getSettingsInv());
+        ediManager.getPlayer().openInventory(settingsInvController.getInventory());
     }
     public boolean isDisplayEnabled(){
         return displayEnabled;
@@ -43,9 +50,6 @@ public class OptionManager{
 
     public boolean isFooterEnabled() {
         return footerEnabled;
-    }
-    public boolean compareSettingsInv(Inventory toCompare){
-        return toCompare.equals(settingsInvController.getSettingsInv());
     }
 
     public void setDisplayEnabled(boolean displayEnabled) {
@@ -60,13 +64,6 @@ public class OptionManager{
         this.footerEnabled = footerEnabled;
     }
 
-    public boolean compareDeepOptionIv(Inventory inventory){
-        if (optionSettingsInvController ==null){
-            return false;
-        }else {
-            return inventory.equals(optionSettingsInvController.getOptionSettingsInv());
-        }
-    }
 
     public HashMap<String, Option> getRegisteredOptions() {
         return options;
@@ -92,7 +89,19 @@ public class OptionManager{
         return settingsInvController;
     }
 
-    public EDIManager getEdiManager() {
-        return ediManager;
+    public FontSettingsInvController getKeyFontSettingsInvController() {
+        return keyFontSettingsInvController;
+    }
+
+    public FontSettingsInvController getSeparatorFontSettingsInvController() {
+        return separatorFontSettingsInvController;
+    }
+
+    public FontSettingsInvController getValueFontSettingsInvController() {
+        return valueFontSettingsInvController;
+    }
+
+    public Player getPlayer(){
+        return ediManager.getPlayer();
     }
 }

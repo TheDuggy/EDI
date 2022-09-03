@@ -1,5 +1,6 @@
 package at.theduggy.edi;
 
+import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.SettingsCommand;
 import at.theduggy.edi.storage.StorageManager;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -42,13 +44,21 @@ public class Main extends JavaPlugin {
     public void onDisable() {
 
         for (EDIManager ediManager:ediPlayerData.values()){
-            Inventory currentInv = ediManager.getPlayer().getOpenInventory().getTopInventory();
-            if (ediManager.getOptionManager().compareSettingsInv(currentInv)||ediManager.getOptionManager().compareDeepOptionIv(currentInv)){
-                ediManager.getPlayer().closeInventory();
+            if (ediManager.getPlayer()!=null){
+                Inventory currentInv = ediManager.getPlayer().getOpenInventory().getTopInventory();
+                Inventory settingsInv = ediManager.getOptionManager().getSettingsInvController().getInventory();
+                Inventory optionSettingsInv = ediManager.getOptionManager().getOptionSettingsInvController().getInventory();
+                Inventory keyFontInv = ediManager.getOptionManager().getKeyFontSettingsInvController().getInventory();
+                Inventory separatorFontInv = ediManager.getOptionManager().getSeparatorFontSettingsInvController().getInventory();
+                Inventory valueFontInv = ediManager.getOptionManager().getValueFontSettingsInvController().getInventory();
+                //Check if ins are null
+                if (currentInv.equals(settingsInv)||currentInv.equals(optionSettingsInv)||currentInv.equals(keyFontInv)||currentInv.equals(separatorFontInv)||currentInv.equals(valueFontInv)){
+                    ediManager.getPlayer().closeInventory();
+                }
+                ediManager.getRenderManager().getScoreboardRenderer().unregister();
+                ediManager.getRenderManager().getFooterRenderer().reset();
+                ediManager.getRenderManager().getHeaderRenderer().reset();
             }
-            ediManager.getRenderManager().getScoreboardRenderer().unregister();
-            ediManager.getRenderManager().getFooterRenderer().reset();
-            ediManager.getRenderManager().getHeaderRenderer().reset();
         }
         try {
             storageManager.save();

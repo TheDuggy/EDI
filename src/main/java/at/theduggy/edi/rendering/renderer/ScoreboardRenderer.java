@@ -42,7 +42,7 @@ public class ScoreboardRenderer {
             if (organisedScores.size()==0){
                 System.out.println(ediManager.getOptionManager().getRegisteredOptions());
                 for (Option o : ediManager.getOptionManager().getDisplayIndexList()){
-                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getName() + ":" + " ":"") + o.getValue(ediManager.getPlayer()), o.getDisplayIndex());
+                    OrganisedScore organisedScore = new OrganisedScore(ediManager, o, (o.isShowKeys()?o.getKeyFontData().format(o.getName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())), o.getDisplayIndex());
                     organisedScores.add(organisedScore);
                     if (o.isEdiDisplay()){
                         organisedScore.render();
@@ -50,10 +50,17 @@ public class ScoreboardRenderer {
                     }
                 }
 
-                OrganisedScore separator = new OrganisedScore(ediManager, null, calculateSeparator(),0);
-                separator.render();
-                organisedScores.add(separator);
-                separator.setScore(tempOrganisedScores.size());
+                ArrayList<Integer> lengths = new ArrayList<>();
+                tempOrganisedScores.forEach(organisedScore -> lengths.add(organisedScore.getLength()));
+                double longestMsgLength = Collections.max(lengths);
+                for (OrganisedScore organisedScore : tempOrganisedScores){
+                    if (!organisedScore.getOption().isShowKeys()){
+                        if (organisedScore.getLength()!=longestMsgLength) {
+                            int spacesToCenter = (int) (Math.round((longestMsgLength / 2.0) - Math.round(organisedScore.getLength()/2.0))/3.0);
+                            organisedScore.update(" ".repeat(spacesToCenter) + organisedScore.getValue());
+                        }
+                    }
+                }
 
                 for (OrganisedScore score : tempOrganisedScores){
                     score.setScore(score.getDisplayIndex());
@@ -62,20 +69,28 @@ public class ScoreboardRenderer {
             }else {
                 tempOrganisedScores.clear();
                 for (OrganisedScore organisedScore : organisedScores){
-                    if (organisedScore.getOption()!=null){
-                        if (organisedScore.getOption().isEdiDisplay()){
-                            organisedScore.update((organisedScore.getOption().isShowKeys()?organisedScore.getOption().getName() + ": ":"") + organisedScore.getOption().getValue(ediManager.getPlayer()));
-                            tempOrganisedScores.add(organisedScore);
-                        }else {
-                            if (organisedScore.isRendered()){
-                                organisedScore.remove();
-                            }
+                    if (organisedScore.getOption().isEdiDisplay()){
+                        Option o = organisedScore.getOption();
+
+                        organisedScore.update((o.isShowKeys()?o.getKeyFontData().format(o.getName()) + o.getSeparatorFontData().format(":") + " ":"") + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
+                        tempOrganisedScores.add(organisedScore);
+                    }else {
+                        if (organisedScore.isRendered()){
+                            organisedScore.remove();
                         }
                     }
                 }
-
-                organisedScores.get(organisedScores.size()-1).update(calculateSeparator());
-                organisedScores.get(organisedScores.size()-1).setScore(tempOrganisedScores.size()+1);
+                ArrayList<Integer> lengths = new ArrayList<>();
+                tempOrganisedScores.forEach(organisedScore -> lengths.add(organisedScore.getLength()));
+                double longestMsgLength = Collections.max(lengths);
+                for (OrganisedScore organisedScore : tempOrganisedScores){
+                    if (!organisedScore.getOption().isShowKeys()){
+                        if (organisedScore.getLength()!=longestMsgLength) {
+                            int spacesToCenter = (int) (Math.round((longestMsgLength / 2.0) - Math.round(organisedScore.getLength()/2.0))/3.0);
+                            organisedScore.update(" ".repeat(spacesToCenter) + organisedScore.getValue());
+                        }
+                    }
+                }
                 for (OrganisedScore score : tempOrganisedScores){
                     score.setScore(score.getDisplayIndex());
                 }
@@ -100,22 +115,6 @@ public class ScoreboardRenderer {
     private void show(){
         hidden = false;
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    }
-
-    private String calculateSeparator(){
-        ArrayList<Integer> lengths = new ArrayList<>();
-        tempOrganisedScores.forEach(organisedScore ->lengths.add(organisedScore.getLength()));
-        String separatorString = "=".repeat((int) Math.ceil((Collections.max(lengths)/ (double) DefaultFontInfo.EQUALS_SIGN.getLength())));
-        char[] separatorChars = separatorString.toCharArray();
-        for (int i = 1; i<separatorChars.length;i+=2){
-            separatorChars[i] = '-';
-        }
-        if (separatorChars[separatorChars.length-1] =='-'){
-            return ChatColor.GREEN + new String(separatorChars) + "=";
-        }else {
-            return ChatColor.GREEN + new String(separatorChars);
-        }
-
     }
 
     public Scoreboard getScoreboard() {
