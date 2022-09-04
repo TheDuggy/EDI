@@ -1,28 +1,28 @@
 /*
-EDI: Extended Debug Info
-Copyright (C) 2022  Georg Kollegger(TheDuggy/CoderTheDuggy)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * EDI: Extended Debug Info
+ * Copyright (C) 2022  Georg Kollegger(TheDuggy/CoderTheDuggy)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package at.theduggy.edi.settings.invControllers;
 
+import at.theduggy.edi.ConfigManager;
 import at.theduggy.edi.Main;
 import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -51,25 +51,27 @@ public class SettingsInvController extends InvController{
 
     private int slot;
     public void registerOption(Option option){
-        if (optionManager.getRegisteredOptions().size()==0){
-            slot = 10;
-        }else if (Arrays.asList(37,39,41).contains(slot)){
-            slot = slot-25;
-        }else if (slot<43){
-            slot += 9;
-        }
-        if (slot > 0){
-            if (optionManager.getDisplayIndexList().size()==0){
-                option.setDisplayIndex(1);
-            }else {
-                option.setDisplayIndex(optionManager.getDisplayIndexList().get(optionManager.getDisplayIndexList().size()-1).getDisplayIndex()+1);
+        String identifier = "included:" + option.getIdentifierName() + "_option";
+        if (!Main.getConfigManager().getBlackListedOptions().contains(identifier)){
+            if (optionManager.getRegisteredOptions().size()==0){
+                slot = 10;
+            }else if (Arrays.asList(37,39,41).contains(slot)){
+                slot = slot-25;
+            }else if (slot<43){
+                slot += 9;
             }
-            optionManager.getDisplayIndexList().add(option);
-            Collections.sort(optionManager.getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
-            option.setInvSlot(slot);
-            optionManager.getRegisteredOptions().put("included:" + option.getIdentifier() + "_option", option);
+            if (slot > 0){
+                if (optionManager.getDisplayIndexList().size()==0){
+                    option.setDisplayIndex(1);
+                }else {
+                    option.setDisplayIndex(optionManager.getDisplayIndexList().get(optionManager.getDisplayIndexList().size()-1).getDisplayIndex()+1);
+                }
+                optionManager.getDisplayIndexList().add(option);
+                Collections.sort(optionManager.getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
+                option.setInvSlot(slot);
+                optionManager.getRegisteredOptions().put("included:" + option.getIdentifierName() + "_option", option);
+            }
         }
-
     }
 
     @Override

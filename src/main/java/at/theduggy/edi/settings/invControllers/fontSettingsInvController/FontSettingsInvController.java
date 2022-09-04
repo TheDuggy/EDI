@@ -1,19 +1,19 @@
 /*
-EDI: Extended Debug Info
-Copyright (C) 2022  Georg Kollegger(TheDuggy/CoderTheDuggy)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * EDI: Extended Debug Info
+ * Copyright (C) 2022  Georg Kollegger(TheDuggy/CoderTheDuggy)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package at.theduggy.edi.settings.invControllers.fontSettingsInvController;
 
 import at.theduggy.edi.settings.OptionManager;
@@ -53,20 +53,24 @@ public class FontSettingsInvController extends InvController {
         this.option = option;
         this.fontData = fontData;
         fontColorItems.clear();
-        fontSettingsInv = Bukkit.createInventory(null, 36, "[Edi-font-settings] " + option.getDisplayName());
+        fontSettingsInv = Bukkit.createInventory(null, 45, "[Edi-font-settings] " + option.getDisplayName());
         ItemStack infoBook = new ItemStack(Material.LEGACY_BOOK_AND_QUILL);
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         ItemMeta infoBookMeta = infoBook.getItemMeta();
-        if (settingsType.equals("key")){
-            infoBookMeta.setDisplayName(ChatColor.GOLD + "Key-font-settings for " + option.getDisplayName());
-            infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the key:", ChatColor.GREEN + "Key" + ChatColor.DARK_GRAY + ": Value"));
-        }else if (settingsType.equals("separator")){
-            infoBookMeta.setDisplayName(ChatColor.GOLD + "Separator-font-settings for " + option.getDisplayName());
-            infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the separator:", ChatColor.DARK_GRAY + "Key" + ChatColor.GREEN + "" + ChatColor.BOLD + ":" + ChatColor.DARK_GRAY + "Value"));
-        }else if (settingsType.equals("value")){
-            infoBookMeta.setDisplayName(ChatColor.GOLD + "Value-font-settings for " + option.getDisplayName());
-            infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the value:", ChatColor.DARK_GRAY + "Key: " + ChatColor.GREEN + "Value"));
+        switch (settingsType) {
+            case "key":
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Key-font-settings for " + option.getDisplayName());
+                infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the key:", ChatColor.GREEN + "Key" + ChatColor.DARK_GRAY + ": Value"));
+                break;
+            case "separator":
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Separator-font-settings for " + option.getDisplayName());
+                infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the separator:", ChatColor.DARK_GRAY + "Key" + ChatColor.GREEN + "" + ChatColor.BOLD + ":" + ChatColor.DARK_GRAY + "Value"));
+                break;
+            case "value":
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Value-font-settings for " + option.getDisplayName());
+                infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the value:", ChatColor.DARK_GRAY + "Key: " + ChatColor.GREEN + "Value"));
+                break;
         }
         backMeta.setDisplayName( ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "Go back" + ChatColor.DARK_GRAY + "]");
         backMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Go back to EDI-Option-Settings"));
@@ -98,6 +102,7 @@ public class FontSettingsInvController extends InvController {
         ItemMeta italicMeta = italic.getItemMeta();
         ItemStack underlined = new ItemStack(Material.ACACIA_SLAB);
         ItemMeta underlinedMeta = underlined.getItemMeta();
+
         if (fontData.isBold()){
             boldMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
             boldMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -105,6 +110,7 @@ public class FontSettingsInvController extends InvController {
         boldMeta.setDisplayName(ChatColor.AQUA + "Bold");
         boldMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Makes the " + settingsType  + ChatColor.GOLD + " " + ChatColor.BOLD + "BOLD" + ChatColor.RESET));
         bold.setItemMeta(boldMeta);
+
         if (fontData.isItalic()){
             italicMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
             italicMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -127,6 +133,7 @@ public class FontSettingsInvController extends InvController {
         for (Integer k: fontColorItems.keySet()){
             fontSettingsInv.setItem(k, fontColorItems.get(k).getItemStack());
         }
+
         fontSettingsInv.setItem(33, bold);
         fontSettingsInv.setItem(4, infoBook);
         fontSettingsInv.setItem(35,back);
