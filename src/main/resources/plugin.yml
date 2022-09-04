@@ -6,3 +6,5 @@ version: ${project.version}
 commands:
   settings:
     description: Opens the EDI-settings!
+  edi-change-key-display-name:
+    description: This command is suggested through the gui, so don't use it by yourself!

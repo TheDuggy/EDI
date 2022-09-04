@@ -16,6 +16,7 @@
  */
 package at.theduggy.edi;
 
+import at.theduggy.edi.commands.ChangeKeyDisplayNameCommand;
 import at.theduggy.edi.commands.SettingsCommand;
 import at.theduggy.edi.storage.StorageManager;
 import org.bukkit.Bukkit;
@@ -29,12 +30,11 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
-    public static String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
     public static String logo = ChatColor.DARK_GRAY + "└" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDInfo" + ChatColor.DARK_GRAY + "┘";
     private static StorageManager storageManager;
     private static HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
 
-    public static ConfigManager configManager;
+    private static ConfigManager configManager;
 
     @Override
     public void onEnable() {
@@ -55,6 +55,7 @@ public class Main extends JavaPlugin {
         }
         Bukkit.getPluginManager().registerEvents(new GlobalEDIController(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
+        getCommand("edi-change-key-display-name").setExecutor(new ChangeKeyDisplayNameCommand());
     }
 
     @Override
@@ -84,8 +85,12 @@ public class Main extends JavaPlugin {
         }
     }
 
-    public static String getPrefix() {
-        return prefix;
+    public static String getPrefix(boolean color) {
+        if (color){
+            return  ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDI" + ChatColor.DARK_GRAY + "] " + ChatColor.WHITE;
+        }else {
+            return "[EDI] ";
+        }
     }
 
     public static StorageManager getStorageManager() {

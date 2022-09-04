@@ -16,8 +16,10 @@
  */
 package at.theduggy.edi.settings.invControllers;
 
+import at.theduggy.edi.Main;
 import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.Option;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -55,9 +57,11 @@ public class OptionSettingsInvController extends InvController{
         ItemStack showKeys = new ItemStack(Material.TRIPWIRE_HOOK);
         ItemStack back = new ItemStack(Material.ARROW);
         ItemStack upDownPosition = new ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA);
-        ItemStack keyFontSettings = new ItemStack(Material.LEGACY_BOOK_AND_QUILL);
-        ItemStack separatorFontSettings = new ItemStack(Material.LEGACY_BOOK_AND_QUILL);
-        ItemStack valueFontSettings = new ItemStack(Material.LEGACY_BOOK_AND_QUILL);
+        ItemStack keyFontSettings = new ItemStack(Material.WRITABLE_BOOK);
+        ItemStack separatorFontSettings = new ItemStack(Material.WRITABLE_BOOK);
+        ItemStack valueFontSettings = new ItemStack(Material.WRITABLE_BOOK);
+        ItemStack changeKeyDisplayName = new ItemStack(Material.FEATHER);
+        ItemMeta changeKeyDisplayNameMeta = changeKeyDisplayName.getItemMeta();
         ItemMeta keyFontSettingsMeta = keyFontSettings.getItemMeta();
         ItemMeta separatorFontSettingsMeta = separatorFontSettings.getItemMeta();
         ItemMeta valueFontSettingsMeta = valueFontSettings.getItemMeta();
@@ -67,7 +71,6 @@ public class OptionSettingsInvController extends InvController{
         ItemMeta footerMeta = footer.getItemMeta();
         ItemMeta ediDisplayMeta = ediDisplay.getItemMeta();
         ItemMeta showKeysMeta = showKeys.getItemMeta();
-
         if (o.isShowKeys()){
             showKeysMeta.setDisplayName(ChatColor.GREEN + "Show keys");
             showKeysMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
@@ -121,6 +124,15 @@ public class OptionSettingsInvController extends InvController{
         valueFontSettingsMeta.setDisplayName(ChatColor.AQUA + "Value-font-settings");
         valueFontSettingsMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Current: ", o.getKeyFontData().format("Key") + o.getSeparatorFontData().format(": ") + o.getValueFontData().format("Value")));
 
+        changeKeyDisplayNameMeta.setDisplayName(ChatColor.AQUA + "Change key-display-name");
+        changeKeyDisplayNameMeta.setLore(Arrays.asList(
+                ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Current: " + option.getKeyFontData().format(option.getDisplayName()),
+                ChatColor.DARK_GRAY + "Click at the chat-msg you receive,",
+                ChatColor.DARK_GRAY + "enter the new name into the chat",
+                ChatColor.DARK_GRAY + "and run it"
+        ));
+
+        changeKeyDisplayName.setItemMeta(changeKeyDisplayNameMeta);
         keyFontSettings.setItemMeta(keyFontSettingsMeta);
         valueFontSettings.setItemMeta(valueFontSettingsMeta);
         separatorFontSettings.setItemMeta(separatorFontSettingsMeta);
@@ -139,6 +151,7 @@ public class OptionSettingsInvController extends InvController{
         optionSettingsInv.setItem(4, footer);
         optionSettingsInv.setItem(5, ediDisplay);
         optionSettingsInv.setItem(17, back);
+        optionSettingsInv.setItem(9, changeKeyDisplayName);
         optionSettingsInv.setItem(6, upDownPosition);
     }
 
@@ -153,6 +166,7 @@ public class OptionSettingsInvController extends InvController{
         final int keyFontSettings = 11;
         final int separatorFontSettings = 13;
         final int valueFontSettings = 15;
+        final int changeKeyDisplayName = 9;
         if (slot == showKeysSlot){
             option.setShowKeys(updateButton(option.isShowKeys(), "Show-keys", slot, optionSettingsInv));
         }else if (slot == edInfoDisplaySlot){
@@ -207,7 +221,13 @@ public class OptionSettingsInvController extends InvController{
         }else if (slot == valueFontSettings){
             optionManager.getValueFontSettingsInvController().refresh(option, option.getValueFontData());
             optionManager.getPlayer().openInventory(optionManager.getValueFontSettingsInvController().getInventory());
+        }else if (slot == changeKeyDisplayName){
+            ComponentBuilder componentBuilder = new ComponentBuilder(Main.getPrefix(true));
+            TextComponent clickable = new TextComponent(ChatColor.AQUA + "Click here to change key-display-name for option\n        " + ChatColor.GOLD + option.getIdentifier());
+            clickable.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/edi-change-key-display-name " + option.getIdentifier() + " "));
+            clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "After clicking, the chat will be opened for you so you can enter the new name!").create()));
+            componentBuilder.append(clickable);
+            optionManager.getPlayer().spigot().sendMessage(componentBuilder.create());
         }
-
     }
 }

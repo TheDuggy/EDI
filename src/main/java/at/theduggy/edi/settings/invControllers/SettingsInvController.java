@@ -16,7 +16,6 @@
  */
 package at.theduggy.edi.settings.invControllers;
 
-import at.theduggy.edi.ConfigManager;
 import at.theduggy.edi.Main;
 import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.*;
@@ -46,13 +45,12 @@ public class SettingsInvController extends InvController{
         registerOption(new RealTimeOption("Real-time", "Shows you the current real-time", "real_world_time"));
         registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time", "ingame_world_time"));
         registerOption(new DateOption("Date", "Shows you the current date", "current_date"));
-        registerOption(new ToolDurabilityOption("Item-Durability", "Shows you the durability of the item in your hand", "current_item_durability"));
+        registerOption(new ToolDurabilityOption("Item-Dur", "Shows you the durability of the item in your hand", "current_item_durability"));
     }
 
     private int slot;
     public void registerOption(Option option){
-        String identifier = "included:" + option.getIdentifierName() + "_option";
-        if (!Main.getConfigManager().getBlackListedOptions().contains(identifier)){
+        if (!Main.getConfigManager().getBlackListedOptions().contains(option.getIdentifier())){
             if (optionManager.getRegisteredOptions().size()==0){
                 slot = 10;
             }else if (Arrays.asList(37,39,41).contains(slot)){
@@ -69,17 +67,13 @@ public class SettingsInvController extends InvController{
                 optionManager.getDisplayIndexList().add(option);
                 Collections.sort(optionManager.getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
                 option.setInvSlot(slot);
-                optionManager.getRegisteredOptions().put("included:" + option.getIdentifierName() + "_option", option);
+                optionManager.getRegisteredOptions().put(option.getIdentifier(), option);
             }
         }
     }
 
     @Override
     public void handleClick(int slot, int BUTTON_TYPE){
-        final int ediScreen = 4;
-        final int footer = 5;
-        final int header = 3;
-        final int close = 49;
         HashMap<Integer, Option> optionsWithSlots = new HashMap<>();
         optionManager.getRegisteredOptions().forEach((id, option) -> optionsWithSlots.put(option.getInvSlot(), option));
         if (optionsWithSlots.containsKey(slot)) {
