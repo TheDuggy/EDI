@@ -44,7 +44,7 @@ public class FooterRenderer{
             for (int i = ediManager.getOptionManager().getDisplayIndexList().size()-1;i>=0;i--){
                 Option o = ediManager.getOptionManager().getDisplayIndexList().get(i);
                 if (o.isFooter()){
-                    footer.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getDisplayName()) + o.getKeyFontData().format(": ") : (logoAppended?"\n":"")) + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
+                    footer.append((o.isShowKeys()?"\n" + o.getKeyFontData().format(o.getKeyDisplayName()) + o.getKeyFontData().format(": ") : (logoAppended?"\n":"")) + o.getValueFontData().format(o.getValue(ediManager.getPlayer())));
                 }
             }
             ediManager.getPlayer().setPlayerListFooter(footer.toString());

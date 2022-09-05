@@ -23,9 +23,9 @@ import java.util.HashMap;
 public class SettingsStorageData {
 
     public HashMap<String, OptionStorageData> options = new HashMap<>();
-    public boolean header;
-    public boolean footer;
-    public boolean ediDisplay;
+    private boolean header;
+    private boolean footer;
+    private boolean ediDisplay;
 
     public SettingsStorageData(OptionManager optionManager){
         header = optionManager.isHeaderEnabled();
@@ -34,6 +34,12 @@ public class SettingsStorageData {
         for (String optionIdentifier : optionManager.getRegisteredOptions().keySet()){
             options.put(optionIdentifier, new OptionStorageData(optionManager.getRegisteredOptions().get(optionIdentifier)));
         }
+    }
+
+    public SettingsStorageData(boolean header, boolean footer, boolean ediDisplay) {
+        this.header = header;
+        this.footer = footer;
+        this.ediDisplay = ediDisplay;
     }
 
     public HashMap<String, OptionStorageData> getOptionsData() {
@@ -50,5 +56,21 @@ public class SettingsStorageData {
 
     public boolean isEdiDisplay() {
         return ediDisplay;
+    }
+
+    public void setOptions(HashMap<String, OptionStorageData> options) {
+        this.options = options;
+    }
+
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
+
+    public void setFooter(boolean footer) {
+        this.footer = footer;
+    }
+
+    public void setEdiDisplay(boolean ediDisplay) {
+        this.ediDisplay = ediDisplay;
     }
 }

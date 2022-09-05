@@ -53,22 +53,22 @@ public class FontSettingsInvController extends InvController {
         this.option = option;
         this.fontData = fontData;
         fontColorItems.clear();
-        fontSettingsInv = Bukkit.createInventory(null, 45, "[Edi-font-settings] " + option.getDisplayName());
+        fontSettingsInv = Bukkit.createInventory(null, 45, "[Edi-font-settings] " + option.getKeyDisplayName());
         ItemStack infoBook = new ItemStack(Material.LEGACY_BOOK_AND_QUILL);
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         ItemMeta infoBookMeta = infoBook.getItemMeta();
         switch (settingsType) {
             case "key":
-                infoBookMeta.setDisplayName(ChatColor.GOLD + "Key-font-settings for " + option.getDisplayName());
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Key-font-settings for " + option.getKeyDisplayName());
                 infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the key:", ChatColor.GREEN + "Key" + ChatColor.DARK_GRAY + ": Value"));
                 break;
             case "separator":
-                infoBookMeta.setDisplayName(ChatColor.GOLD + "Separator-font-settings for " + option.getDisplayName());
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Separator-font-settings for " + option.getKeyDisplayName());
                 infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the separator:", ChatColor.DARK_GRAY + "Key" + ChatColor.GREEN + "" + ChatColor.BOLD + ":" + ChatColor.DARK_GRAY + "Value"));
                 break;
             case "value":
-                infoBookMeta.setDisplayName(ChatColor.GOLD + "Value-font-settings for " + option.getDisplayName());
+                infoBookMeta.setDisplayName(ChatColor.GOLD + "Value-font-settings for " + option.getKeyDisplayName());
                 infoBookMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Font-settings for the value:", ChatColor.DARK_GRAY + "Key: " + ChatColor.GREEN + "Value"));
                 break;
         }

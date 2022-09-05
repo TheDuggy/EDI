@@ -36,7 +36,7 @@ public class ChangeKeyDisplayNameCommand implements CommandExecutor {
                 EDIManager ediManager = Main.getEdiPlayerData().get(player.getUniqueId());
                 if (ediManager.getOptionManager().getRegisteredOptions().containsKey(args[0])){
                     Option option = ediManager.getOptionManager().getRegisteredOptions().get(args[0]);
-                    String oldKeyDisplayName = option.getDisplayName();
+                    String oldKeyDisplayName = option.getKeyDisplayName();
                     option.setKeyDisplayName(args[1]);
                     player.sendMessage(Main.getPrefix(true) + ChatColor.GREEN + "Successfully changed key-display-name for option\n        " + args[0] + " from " + ChatColor.GOLD + oldKeyDisplayName + ChatColor.GREEN + " to " + ChatColor.GOLD + args[1] + ChatColor.GREEN + "!");
                 }else {

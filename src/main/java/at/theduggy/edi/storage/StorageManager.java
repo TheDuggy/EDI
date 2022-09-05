@@ -22,6 +22,9 @@ import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontDat
 import at.theduggy.edi.settings.options.Option;
 import at.theduggy.edi.storage.dataObj.OptionStorageData;
 import at.theduggy.edi.storage.dataObj.SettingsStorageData;
+import at.theduggy.edi.storage.jsonAdapter.FontDataJsonAdapter;
+import at.theduggy.edi.storage.jsonAdapter.OptionStorageDataJsonAdapter;
+import at.theduggy.edi.storage.jsonAdapter.SettingsStorageDataJsonAdapter;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,10 +44,12 @@ public class StorageManager implements Listener {
     public File DATA_FILE = new File(Main.getPlugin(Main.class).getDataFolder() + "/settings.data");
 
     private Gson gson;
-    private Gson getGson(){
+    public Gson getGson(){
         if (gson == null){
             GsonBuilder builder = new  GsonBuilder().setPrettyPrinting();
-            builder.registerTypeAdapter(FontData.class, new FontDataTypeAdapter());
+            builder.registerTypeAdapter(FontData.class, new FontDataJsonAdapter());
+            builder.registerTypeAdapter(OptionStorageData.class, new OptionStorageDataJsonAdapter());
+            builder.registerTypeAdapter(SettingsStorageData.class, new SettingsStorageDataJsonAdapter());
             gson = builder.create();
             return gson;
         }else {
@@ -83,7 +88,7 @@ public class StorageManager implements Listener {
                     throw new RuntimeException(e);
                 }
             }
-        }.runTaskTimer(Main.getPlugin(Main.class),0, 60);
+        }.runTaskTimer(Main.getPlugin(Main.class),0, Main.getConfigManager().getSaveCycleCount());
     }
 
     public void registerUser(Player player){
@@ -109,5 +114,6 @@ public class StorageManager implements Listener {
         }
         bw.write(getGson().toJson(storageData));
         bw.close();
+        System.out.println("Saved!");
     }
 }

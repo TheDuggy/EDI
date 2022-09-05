@@ -18,9 +18,6 @@ package at.theduggy.edi.storage.dataObj;
 
 import at.theduggy.edi.settings.invControllers.fontSettingsInvController.FontData;
 import at.theduggy.edi.settings.options.Option;
-import com.google.gson.annotations.Expose;
-
-import java.util.ArrayList;
 
 public class OptionStorageData {
 
@@ -31,7 +28,7 @@ public class OptionStorageData {
 
     private int displayIndex;
 
-
+    private String keyDisplayName;
     private FontData keyFontData;
 
     private FontData separatorFontData;
@@ -47,6 +44,14 @@ public class OptionStorageData {
         this.keyFontData = option.getKeyFontData();
         this.separatorFontData = option.getSeparatorFontData();
         this.valueFontData = option.getValueFontData();
+        this.keyDisplayName = option.getKeyDisplayName();
+    }
+
+    public OptionStorageData(boolean showKeys, boolean header, boolean footer, boolean ediDisplay) {
+        this.showKeys = showKeys;
+        this.header = header;
+        this.footer = footer;
+        this.ediDisplay = ediDisplay;
     }
 
     public void applyDataToStorage(Option option){
@@ -58,6 +63,7 @@ public class OptionStorageData {
         option.setKeyFontData(keyFontData);
         option.setSeparatorFontData(separatorFontData);
         option.setValueFontData(valueFontData);
+        option.setKeyDisplayName(keyDisplayName);
     }
 
     //TODO Remove!!!!!!
@@ -72,5 +78,65 @@ public class OptionStorageData {
 
     public FontData getValueFontData() {
         return valueFontData;
+    }
+
+    public boolean isShowKeys() {
+        return showKeys;
+    }
+
+    public boolean isHeader() {
+        return header;
+    }
+
+    public boolean isFooter() {
+        return footer;
+    }
+
+    public boolean isEdiDisplay() {
+        return ediDisplay;
+    }
+
+    public int getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public String getKeyDisplayName() {
+        return keyDisplayName;
+    }
+
+    public void setShowKeys(boolean showKeys) {
+        this.showKeys = showKeys;
+    }
+
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
+
+    public void setFooter(boolean footer) {
+        this.footer = footer;
+    }
+
+    public void setEdiDisplay(boolean ediDisplay) {
+        this.ediDisplay = ediDisplay;
+    }
+
+    public void setDisplayIndex(int displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+
+    public void setKeyDisplayName(String keyDisplayName) {
+        this.keyDisplayName = keyDisplayName;
+    }
+
+    public void setKeyFontData(FontData keyFontData) {
+        this.keyFontData = keyFontData;
+    }
+
+    public void setSeparatorFontData(FontData separatorFontData) {
+        this.separatorFontData = separatorFontData;
+    }
+
+    public void setValueFontData(FontData valueFontData) {
+        this.valueFontData = valueFontData;
     }
 }

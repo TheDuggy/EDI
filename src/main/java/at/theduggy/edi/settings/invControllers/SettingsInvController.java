@@ -116,7 +116,7 @@ public class SettingsInvController extends InvController{
             ItemStack sign = new ItemStack(Material.SIGN);
             ItemMeta itemMeta = sign.getItemMeta();
             itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC +option.getInfo()));
-            itemMeta.setDisplayName(ChatColor.GOLD + option.getDisplayName());
+            itemMeta.setDisplayName(ChatColor.GOLD + option.getKeyDisplayName());
             if (option.isFooter()||option.isHeader()||option.isEdiDisplay()){
                 itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);

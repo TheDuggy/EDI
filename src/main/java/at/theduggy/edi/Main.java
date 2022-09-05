@@ -38,7 +38,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.saveConfig();
+        this.saveDefaultConfig();
         configManager = new ConfigManager(this.getConfig());
         try {
             storageManager = new StorageManager();

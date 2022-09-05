@@ -87,7 +87,7 @@ public abstract class Option {
         return optionIdentifierName;
     }
 
-    public String getDisplayName() {
+    public String getKeyDisplayName() {
         return optionKeyDisplayName;
     }
 

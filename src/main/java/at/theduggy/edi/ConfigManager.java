@@ -35,4 +35,8 @@ public class ConfigManager {
     public ArrayList<String> getBlackListedOptions(){
         return new ArrayList<>(config.getStringList("blacklisted_options"));
     }
+
+    public Long getSaveCycleCount(){
+        return config.getLong("storage_save_cycle");
+    }
 }
