@@ -17,6 +17,7 @@
 package at.theduggy.edi.rendering;
 
 import at.theduggy.edi.EDIManager;
+import at.theduggy.edi.Main;
 import at.theduggy.edi.rendering.renderer.FooterRenderer;
 import at.theduggy.edi.rendering.renderer.HeaderRenderer;
 import at.theduggy.edi.rendering.renderer.ScoreboardRenderer;
@@ -37,9 +38,17 @@ public class RenderManager {
     }
 
     public void update(){
-        scoreboardRenderer.render();
-        footerRenderer.render();
-        headerRenderer.render();
+        if (Main.getConfigManager().ediDisplayEnabled()){
+            scoreboardRenderer.render();
+        }
+
+        if (Main.getConfigManager().infoFooterEnabled()){
+            footerRenderer.render();
+        }
+
+        if (Main.getConfigManager().infoHeaderEnabled()){
+            headerRenderer.render();
+        }
     }
 
     public ScoreboardRenderer getScoreboardRenderer() {

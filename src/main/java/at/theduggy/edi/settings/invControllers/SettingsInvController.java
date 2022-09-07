@@ -50,6 +50,7 @@ public class SettingsInvController extends InvController{
 
     private int slot;
     public void registerOption(Option option){
+        System.out.println(option.getIdentifier());
         if (!Main.getConfigManager().getBlackListedOptions().contains(option.getIdentifier())){
             if (optionManager.getRegisteredOptions().size()==0){
                 slot = 10;
@@ -82,17 +83,23 @@ public class SettingsInvController extends InvController{
         }else {
             switch (slot){
                 case 3:
-                    optionManager.setHeaderEnabled(updateButton(optionManager.isHeaderEnabled(), "EDInfo-Header", slot, settingsInv));
+                    if (Main.getConfigManager().infoHeaderEnabled()){
+                        optionManager.setHeaderEnabled(updateButton(optionManager.isHeaderEnabled(), "EDInfo-Header", slot, settingsInv));
+                    }
                     break;
 
                 case 4:
-                    optionManager.setDisplayEnabled(updateButton(optionManager.isDisplayEnabled(), "EDInfo-Screen", slot, settingsInv));
+                    if (Main.getConfigManager().ediDisplayEnabled()){
+                        optionManager.setDisplayEnabled(updateButton(optionManager.isDisplayEnabled(), "EDInfo-Screen", slot, settingsInv));
+                    }
                     break;
 
                 case 5:
-                    optionManager.setFooterEnabled(updateButton(optionManager.isFooterEnabled(), "EDInfo-Footer", slot, settingsInv));
+                    if (Main.getConfigManager().infoFooterEnabled()){
+                        optionManager.setFooterEnabled(updateButton(optionManager.isFooterEnabled(), "EDInfo-Footer", slot, settingsInv));
+                    }
                     break;
-                default:
+                case 49:
                     optionManager.getPlayer().closeInventory();
             }
         }
@@ -100,9 +107,23 @@ public class SettingsInvController extends InvController{
 
     public void refresh(){
         settingsInv = Bukkit.createInventory(null,54,"EDI Settings");
-        addFixedButtons(Material.YELLOW_STAINED_GLASS_PANE, "EDInfo-Screen", "Enables/disbales the EDInfo-Screen", optionManager.isDisplayEnabled(), 4);
-        addFixedButtons(Material.LEATHER_HELMET, "EDInfo-Header", "Enables/disbales the EDInfo-Header", optionManager.isHeaderEnabled(), 3);
-        addFixedButtons(Material.LEATHER_BOOTS, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", optionManager.isFooterEnabled(), 5);
+        if (Main.getConfigManager().ediDisplayEnabled()){
+            addFixedButtons(Material.ORANGE_STAINED_GLASS_PANE, "EDInfo-Screen", "Enables/disbales the EDInfo-Screen", optionManager.isDisplayEnabled(), 4, false);
+        }else {
+            addFixedButtons(Material.RED_STAINED_GLASS_PANE, "EDInfo-Screen", "", optionManager.isDisplayEnabled(), 4, true);
+        }
+        if (Main.getConfigManager().infoHeaderEnabled()){
+            addFixedButtons(Material.LEATHER_HELMET, "EDInfo-Header", "Enables/disbales the EDInfo-Header", optionManager.isHeaderEnabled(), 3, false);
+        }else {
+            addFixedButtons(Material.RED_STAINED_GLASS_PANE, "EDInfo-Header", "", optionManager.isHeaderEnabled(), 3, true);
+        }
+        if (Main.getConfigManager().infoFooterEnabled()){
+            addFixedButtons(Material.LEATHER_BOOTS, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", optionManager.isFooterEnabled(), 5, false);
+        }else {
+            addFixedButtons(Material.RED_STAINED_GLASS_PANE, "EDInfo-Footer", "Enables/disbales the EDInfo-Footer", optionManager.isFooterEnabled(), 5, true);
+        }
+
+
 
         //Crate the close-button
         ItemStack close = new ItemStack(Material.BARRIER);
@@ -116,7 +137,7 @@ public class SettingsInvController extends InvController{
             ItemStack sign = new ItemStack(Material.SIGN);
             ItemMeta itemMeta = sign.getItemMeta();
             itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC +option.getInfo()));
-            itemMeta.setDisplayName(ChatColor.GOLD + option.getKeyDisplayName());
+            itemMeta.setDisplayName(ChatColor.GOLD + option.getDisplayName());
             if (option.isFooter()||option.isHeader()||option.isEdiDisplay()){
                 itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -126,18 +147,24 @@ public class SettingsInvController extends InvController{
         }
     }
 
-    public void addFixedButtons(Material type, String displayName, String info, boolean enabled, int slot){
+    public void addFixedButtons(Material type, String displayName, String info, boolean enabled, int slot, boolean locked){
         ItemStack itemStack = new ItemStack(type);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setLore(Arrays.asList( ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + info));
-        if (enabled){
-            itemMeta.setDisplayName(ChatColor.GREEN + displayName);
-            itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (!locked){
+            itemMeta.setLore(Arrays.asList( ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + info));
+            if (enabled){
+                itemMeta.setDisplayName(ChatColor.GREEN + displayName);
+                itemMeta.addEnchant(Enchantment.KNOCKBACK,1,true);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }else {
+                itemMeta.setDisplayName(ChatColor.RED + displayName);
+            }
+            itemStack.setItemMeta(itemMeta);
         }else {
-            itemMeta.setDisplayName(ChatColor.RED + displayName);
+            itemMeta.setDisplayName(ChatColor.DARK_RED + displayName);
+            itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Locked by server-admin"));
+            itemStack.setItemMeta(itemMeta);
         }
-        itemStack.setItemMeta(itemMeta);
         settingsInv.setItem(slot, itemStack);
     }
 

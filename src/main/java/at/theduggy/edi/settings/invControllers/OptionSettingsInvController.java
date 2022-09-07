@@ -49,7 +49,7 @@ public class OptionSettingsInvController extends InvController{
 
     public void refresh(Option o){
         this.option = o;
-        String optionName = o.getKeyDisplayName();
+        String optionName = o.getDisplayName();
         optionSettingsInv = Bukkit.createInventory(null,18, "[EDI] " + optionName);
         ItemStack header = new ItemStack(Material.LEATHER_HELMET);
         ItemStack footer = new ItemStack(Material.LEATHER_BOOTS);
@@ -126,7 +126,7 @@ public class OptionSettingsInvController extends InvController{
 
         changeKeyDisplayNameMeta.setDisplayName(ChatColor.AQUA + "Change key-display-name");
         changeKeyDisplayNameMeta.setLore(Arrays.asList(
-                ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Current: " + option.getKeyFontData().format(option.getKeyDisplayName()),
+                ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "Current: " + option.getKeyFontData().format(option.getDisplayName()),
                 ChatColor.DARK_GRAY + "Click at the chat-msg you receive,",
                 ChatColor.DARK_GRAY + "enter the new name into the chat",
                 ChatColor.DARK_GRAY + "and run it"

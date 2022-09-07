@@ -13,3 +13,18 @@ blacklisted_options:
 #Defines how often the settings-data will be saved to the storage (in ticks; 1 sec = 20 ticks)
 #Default = 18000 (=> 15min)
 storage_save_cycle: 18000
+
+#Defines if the scoreboard could be enabled by the player
+#If set to false, it wouldn't show up at all
+#Default = true
+ediDisplayEnabled: true
+
+#Defines if the info-header could be enabled by the player
+#If set to false, it wouldn't show up at all
+#Default = true
+infoHeaderEnabled: true
+
+#Defines if the info-footer could be enabled by the player
+#If set to false, it wouldn't show up at all
+#Default = true
+infoFooterEnabled: true

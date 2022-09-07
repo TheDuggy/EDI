@@ -40,6 +40,8 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.saveDefaultConfig();
         configManager = new ConfigManager(this.getConfig());
+        configManager.updateConfig();
+        this.saveConfig();
         try {
             storageManager = new StorageManager();
             Bukkit.getPluginManager().registerEvents(storageManager, this);
@@ -104,4 +106,5 @@ public class Main extends JavaPlugin {
     public static ConfigManager getConfigManager() {
         return configManager;
     }
+
 }

@@ -33,18 +33,21 @@ public abstract class Option {
     private final String optionInfo;
     private String optionKeyDisplayName;
 
+    private final String displayName;
+
     private int displayIndex;
 
     private int invSlot;
 
 
-    public Option(String optionKeyDisplayName, String optionInfo , String optionIdentifierName) {
+    public Option(String displayName, String optionInfo , String optionIdentifierName) {
+        this.displayName = displayName;
         this.keyFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.separatorFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.valueFontData = new FontData(ChatColor.GOLD, false, false, false);
         this.optionInfo = optionInfo;
         this.optionIdentifierName = "included:" + optionIdentifierName;
-        this.optionKeyDisplayName = optionKeyDisplayName;
+        this.optionKeyDisplayName = displayName;
         this.header = false;
         this.footer = false;
         this.ediDisplay = true;
@@ -89,6 +92,10 @@ public abstract class Option {
 
     public String getKeyDisplayName() {
         return optionKeyDisplayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public int getInvSlot() {

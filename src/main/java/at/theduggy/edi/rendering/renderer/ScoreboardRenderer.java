@@ -65,18 +65,16 @@ public class ScoreboardRenderer {
                 ArrayList<Integer> lengths = new ArrayList<>();
                 tempOrganisedScores.forEach(organisedScore -> lengths.add(organisedScore.getLength()));
                 double longestMsgLength = Collections.max(lengths);
-                for (OrganisedScore organisedScore : tempOrganisedScores){
-                    if (!organisedScore.getOption().isShowKeys()){
-                        if (organisedScore.getLength()!=longestMsgLength) {
-                            int spacesToCenter = (int) (Math.round((longestMsgLength / 2.0) - Math.round(organisedScore.getLength()/2.0))/3.0);
-                            organisedScore.update(" ".repeat(spacesToCenter) + organisedScore.getValue());
-                        }
+                for (int i = tempOrganisedScores.size()-1;i>=0;i--){
+                    OrganisedScore organisedScore = tempOrganisedScores.get(i);
+                    if (organisedScore.getLength()!=longestMsgLength) {
+                        int spacesToCenter = (int) (Math.round((longestMsgLength / 2.0) - Math.round(organisedScore.getLength()/2.0))/3.0);
+                        organisedScore.update(" ".repeat(spacesToCenter) + organisedScore.getValue());
+                        organisedScore.setScore(organisedScore.getDisplayIndex());
                     }
                 }
 
-                for (OrganisedScore score : tempOrganisedScores){
-                    score.setScore(score.getDisplayIndex());
-                }
+
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }else {
                 tempOrganisedScores.clear();
@@ -95,17 +93,17 @@ public class ScoreboardRenderer {
                 ArrayList<Integer> lengths = new ArrayList<>();
                 tempOrganisedScores.forEach(organisedScore -> lengths.add(organisedScore.getLength()));
                 double longestMsgLength = Collections.max(lengths);
-                for (OrganisedScore organisedScore : tempOrganisedScores){
+                for (int i = tempOrganisedScores.size()-1;i>=0;i--){
+                    OrganisedScore organisedScore = tempOrganisedScores.get(i);
                     if (!organisedScore.getOption().isShowKeys()){
                         if (organisedScore.getLength()!=longestMsgLength) {
                             int spacesToCenter = (int) (Math.round((longestMsgLength / 2.0) - Math.round(organisedScore.getLength()/2.0))/3.0);
                             organisedScore.update(" ".repeat(spacesToCenter) + organisedScore.getValue());
+                            organisedScore.setScore(organisedScore.getDisplayIndex());
                         }
                     }
                 }
-                for (OrganisedScore score : tempOrganisedScores){
-                    score.setScore(score.getDisplayIndex());
-                }
+
                 ediManager.getPlayer().setScoreboard(scoreboard);
             }
         }else {

@@ -39,4 +39,44 @@ public class ConfigManager {
     public Long getSaveCycleCount(){
         return config.getLong("storage_save_cycle");
     }
+
+    public boolean ediDisplayEnabled(){
+        return config.getBoolean("ediDisplayEnabled");
+    }
+
+    public boolean infoHeaderEnabled(){
+        return config.getBoolean("infoHeaderEnabled");
+    }
+
+    public boolean infoFooterEnabled(){
+        return config.getBoolean("infoFooterEnabled");
+    }
+
+    public void updateConfig(){
+        if (!config.contains("update_cycle_count")){
+            config.set("update_cycle_count", 2);
+        }
+
+        if (!config.contains("blacklisted_options")){
+            config.set("blacklisted_options", null);
+        }
+
+        if (!config.contains("storage_save_cycle")){
+            config.set("storage_save_cycle", 18000);
+        }
+
+        if (!config.contains("ediDisplayEnabled")){
+            config.set("ediDisplayEnabled", true);
+        }
+
+
+        if (!config.contains("infoHeaderEnabled")){
+            config.set("infoHeaderEnabled", true);
+        }
+
+        if (!config.contains("infoFooterEnabled")){
+            config.set("infoFooterEnabled",true);
+        }
+    }
+
 }
