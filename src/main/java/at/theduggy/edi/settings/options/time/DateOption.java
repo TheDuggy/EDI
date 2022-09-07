@@ -1,12 +1,12 @@
 /*
  * EDI: Extended Debug Info
  * Copyright (C) 2022  Georg Kollegger(TheDuggy/CoderTheDuggy)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -14,26 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.theduggy.edi.commands;
+package at.theduggy.edi.settings.options.time;
 
-import at.theduggy.edi.Main;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import at.theduggy.edi.settings.options.Option;
 import org.bukkit.entity.Player;
 
-public class SettingsCommand implements CommandExecutor {
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class DateOption extends Option {
+    public DateOption(String optionDisplayName, String optionInfo, String optionIdentifier) {
+        super(optionDisplayName, optionInfo, optionIdentifier, true);
+    }
+
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (commandSender instanceof Player){
-            Player player = (Player) commandSender;
-            if (strings.length==0){
-               Main.getEdiPlayerData().get(player.getUniqueId()).getOptionManager().showSettingsInv();
-            }else {
-                player.sendMessage(Main.getPrefix(false) + ChatColor.RED + "No arguments are allowed!");
-            }
-        }
-        return false;
+    public String getValue(Player player) {
+        LocalDate localDate = LocalDate.now();
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDate);
     }
 }

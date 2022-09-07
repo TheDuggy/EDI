@@ -40,7 +40,7 @@ public abstract class Option {
     private int invSlot;
 
 
-    public Option(String displayName, String optionInfo , String optionIdentifierName) {
+    public Option(String displayName, String optionInfo , String optionIdentifierName, boolean defaultEnabled) {
         this.displayName = displayName;
         this.keyFontData = new FontData(ChatColor.GRAY, false, false, false);
         this.separatorFontData = new FontData(ChatColor.GRAY, false, false, false);
@@ -48,9 +48,15 @@ public abstract class Option {
         this.optionInfo = optionInfo;
         this.optionIdentifierName = "included:" + optionIdentifierName;
         this.optionKeyDisplayName = displayName;
-        this.header = false;
-        this.footer = false;
-        this.ediDisplay = true;
+        if (defaultEnabled){
+            this.header = true;
+            this.footer = true;
+            this.ediDisplay = true;
+        }else {
+            this.header = false;
+            this.footer = false;
+            this.ediDisplay = false;
+        }
         this.showKeys = true;
     }
 

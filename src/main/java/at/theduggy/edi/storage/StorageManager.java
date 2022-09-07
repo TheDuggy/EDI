@@ -67,10 +67,12 @@ public class StorageManager implements Listener {
                 ediManager.getOptionManager().setDisplayEnabled(storageData.isEdiDisplay());
                 ediManager.getOptionManager().setFooterEnabled(storageData.isFooter());
                 ediManager.getOptionManager().setHeaderEnabled(storageData.isHeader());
+                System.out.println(getGson().toJson(storageData));
                 for (String option_identifier : storageData.getOptionsData().keySet()){
                     Option option = ediManager.getOptionManager().getRegisteredOptions().get(option_identifier);
                     OptionStorageData optionStorageData = dataOfPlayers.get(player).getOptionsData().get(option_identifier);
-                    optionStorageData.applyDataToStorage(option);
+                    System.out.println(getGson().toJson(optionStorageData));
+                    optionStorageData.applyDataToOption(option);
                 }
                 Collections.sort(ediManager.getOptionManager().getDisplayIndexList(), Comparator.comparing(Option::getDisplayIndex));
                 Main.getEdiPlayerData().put(UUID.fromString(player), ediManager);

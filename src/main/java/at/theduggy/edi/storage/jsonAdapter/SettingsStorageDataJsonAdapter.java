@@ -41,6 +41,7 @@ public class SettingsStorageDataJsonAdapter implements JsonSerializer<SettingsSt
         if (jsonObject.keySet().contains("footer")){
             settingsStorageData.setHeader(jsonObject.get("footer").getAsBoolean());
         }
+        settingsStorageData.setOptions(context.deserialize(jsonObject.get("registeredOptions"), new TypeToken<HashMap<String, OptionStorageData>>(){}.getType()));
         return settingsStorageData;
     }
 

@@ -54,7 +54,8 @@ public class OptionStorageData {
         this.ediDisplay = ediDisplay;
     }
 
-    public void applyDataToStorage(Option option){
+    public void applyDataToOption(Option option){
+        System.out.println(header);
         option.setShowKeys(showKeys);
         option.setHeader(header);
         option.setFooter(footer);
@@ -65,8 +66,6 @@ public class OptionStorageData {
         option.setValueFontData(valueFontData);
         option.setKeyDisplayName(keyDisplayName);
     }
-
-    //TODO Remove!!!!!!
 
     public FontData getKeyFontData() {
         return keyFontData;

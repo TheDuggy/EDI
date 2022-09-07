@@ -19,6 +19,12 @@ package at.theduggy.edi.settings.invControllers;
 import at.theduggy.edi.Main;
 import at.theduggy.edi.settings.OptionManager;
 import at.theduggy.edi.settings.options.*;
+import at.theduggy.edi.settings.options.durablility.*;
+import at.theduggy.edi.settings.options.server.IpAddressOption;
+import at.theduggy.edi.settings.options.server.PingOption;
+import at.theduggy.edi.settings.options.time.DateOption;
+import at.theduggy.edi.settings.options.time.IngameTimeOption;
+import at.theduggy.edi.settings.options.time.RealTimeOption;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -46,11 +52,16 @@ public class SettingsInvController extends InvController{
         registerOption(new IngameTimeOption("Ingame-time", "Shows you the current ingame-time", "ingame_world_time"));
         registerOption(new DateOption("Date", "Shows you the current date", "current_date"));
         registerOption(new ToolDurabilityOption("Item-Dur", "Shows you the durability of the item in your hand", "current_item_durability"));
+        registerOption(new HelmetDurabilityOption("Helmet-Dur", "Shows you the durability of the helmet you wear", "current_helmet_durability"));
+        registerOption(new ChestplateDurabilityOption("Chestplate-Dur", "Shows you the durability of the chestplate you wear", "current_chestplate_durability"));
+        registerOption(new LeggingsDurability("Leggings-Dur", "Shows you the durability of the leggings you wear", "current_leggings_durability"));
+        registerOption(new BootsDurabilityOption("Boots-Dur","Shows you the durability of the leggings you wear", "current_boots_durability"));
+        registerOption(new IpAddressOption("Your IP", "Shows your IP-Address over witch you are connected to the server", "player_ip_address"));
+        registerOption(new PingOption("Ping", "Shows your current ping", "player_ping"));
     }
 
     private int slot;
     public void registerOption(Option option){
-        System.out.println(option.getIdentifier());
         if (!Main.getConfigManager().getBlackListedOptions().contains(option.getIdentifier())){
             if (optionManager.getRegisteredOptions().size()==0){
                 slot = 10;
@@ -125,7 +136,7 @@ public class SettingsInvController extends InvController{
 
 
 
-        //Crate the close-button
+        //Create the close-button
         ItemStack close = new ItemStack(Material.BARRIER);
         ItemMeta closeMeta = close.getItemMeta();;
         closeMeta.setDisplayName(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "Close" + ChatColor.DARK_GRAY + "]");
@@ -134,7 +145,7 @@ public class SettingsInvController extends InvController{
 
         for (Option option: optionManager.getRegisteredOptions().values()){
             //Create all options on the gui
-            ItemStack sign = new ItemStack(Material.SIGN);
+            ItemStack sign = new ItemStack(Material.OAK_SIGN);
             ItemMeta itemMeta = sign.getItemMeta();
             itemMeta.setLore(Arrays.asList(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC +option.getInfo()));
             itemMeta.setDisplayName(ChatColor.GOLD + option.getDisplayName());

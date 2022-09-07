@@ -1,5 +1,5 @@
 name: edi
-api-version: 1.13
+api-version: 1.16
 main: at.theduggy.edi.Main
 version: ${project.version}
 
