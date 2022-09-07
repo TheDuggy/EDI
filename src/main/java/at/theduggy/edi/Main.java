@@ -32,7 +32,7 @@ import java.util.UUID;
 public class Main extends JavaPlugin {
     public static String logo = ChatColor.DARK_GRAY + "└" + ChatColor.GOLD + "" + ChatColor.BOLD + "EDInfo" + ChatColor.DARK_GRAY + "┘";
     private static StorageManager storageManager;
-    private static HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
+    private static final HashMap<UUID, EDIManager> ediPlayerData = new HashMap<>();
 
     private static ConfigManager configManager;
 
@@ -40,8 +40,9 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.saveDefaultConfig();
         configManager = new ConfigManager(this.getConfig());
-        configManager.updateConfig();
-        this.saveConfig();
+        if (configManager.displayConfigOnStartup()){
+            configManager.sendConfigValues();
+        }
         try {
             storageManager = new StorageManager();
             Bukkit.getPluginManager().registerEvents(storageManager, this);

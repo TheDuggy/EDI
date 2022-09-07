@@ -55,7 +55,6 @@ public class OptionStorageData {
     }
 
     public void applyDataToOption(Option option){
-        System.out.println(header);
         option.setShowKeys(showKeys);
         option.setHeader(header);
         option.setFooter(footer);

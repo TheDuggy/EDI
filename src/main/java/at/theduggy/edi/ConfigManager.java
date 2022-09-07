@@ -16,6 +16,7 @@
  */
 package at.theduggy.edi;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -52,31 +53,21 @@ public class ConfigManager {
         return config.getBoolean("infoFooterEnabled");
     }
 
-    public void updateConfig(){
-        if (!config.contains("update_cycle_count")){
-            config.set("update_cycle_count", 2);
-        }
-
-        if (!config.contains("blacklisted_options")){
-            config.set("blacklisted_options", null);
-        }
-
-        if (!config.contains("storage_save_cycle")){
-            config.set("storage_save_cycle", 18000);
-        }
-
-        if (!config.contains("ediDisplayEnabled")){
-            config.set("ediDisplayEnabled", true);
-        }
-
-
-        if (!config.contains("infoHeaderEnabled")){
-            config.set("infoHeaderEnabled", true);
-        }
-
-        if (!config.contains("infoFooterEnabled")){
-            config.set("infoFooterEnabled",true);
-        }
+    public boolean displayConfigOnStartup(){
+        return config.getBoolean("show_config_values_on_startup");
     }
 
+    public void sendConfigValues(){
+        Bukkit.getLogger().warning("------------------EDI------------------");
+        Bukkit.getLogger().warning("update_cycle_count : " + getUpdateCycleCount());
+        Bukkit.getLogger().warning("storage_save_cycle : " + getSaveCycleCount());
+        Bukkit.getLogger().warning("ediDisplayEnabled  : " + ediDisplayEnabled());
+        Bukkit.getLogger().warning("infoHeaderEnabled  : " + infoHeaderEnabled());
+        Bukkit.getLogger().warning("infoFooterEnabled  : " + infoFooterEnabled());
+        ArrayList<String> blacklistedOptions = getBlackListedOptions();
+        Bukkit.getLogger().warning("blacklistedOptions : " + (blacklistedOptions.size()>0?blacklistedOptions.get(0):""));
+        for (int i = 1;i<blacklistedOptions.size();i++){
+            Bukkit.getLogger().warning(" ".repeat(21) + blacklistedOptions.get(i));
+        }
+    }
 }

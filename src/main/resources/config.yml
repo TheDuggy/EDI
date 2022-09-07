@@ -1,6 +1,9 @@
 #
 #   EDI: Extended-Debug-Info
 #         Config v${project.version}
+#Displays the values set in the config on the server-startup!
+#Default=true
+show_config_values_on_startup: true
 
 #Defines how often the values of an option are updated (in ticks; 1 sec = 20 ticks)
 #Default = 2
@@ -8,7 +11,7 @@ update_cycle_count: 2
 
 #All options which are added will be not usable by players. Just add them by their identifier
 #For a list of the standard option-identifier look at the github-page of the plugin
-blacklisted_options:
+blacklisted_options: []
 
 #Defines how often the settings-data will be saved to the storage (in ticks; 1 sec = 20 ticks)
 #Default = 18000 (=> 15min)
